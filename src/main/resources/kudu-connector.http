@@ -1,0 +1,47 @@
+# curl -i -X POST   -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/ -d '{ "name": "kudu-connector", "config": { "connector.class": "personal.leo.kafka_connect_kudu.KuduSinkConector", "tasks.max": "1","topics.regex":"hdp04.test.t.*","masterAddresses":"test02","key.converter":"personal.leo.kafka_connect_kudu.JSONObjectConverter","value.converter":"personal.leo.kafka_connect_kudu.JSONObjectConverter"} }'
+POST hdp02:10200/connectors/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "kudu-connector",
+  "config": {
+    "connector.class": "personal.leo.kafka_connect_kudu.KuduSinkConector",
+    "topics.regex": "hdp04.test.t6.*",
+    "masterAddresses": "test02",
+    "kuduTableName": "presto::s1.t6",
+    "key.converter": "personal.leo.kafka_connect_kudu.JSONObjectConverter",
+    "value.converter": "personal.leo.kafka_connect_kudu.JSONObjectConverter"
+  }
+}
+
+###
+
+# curl -i -X DELETE -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/kudu-connector
+DELETE hdp02:10200/connectors/kudu-connector
+Accept: application/json
+Content-Type: application/json
+
+###
+
+# curl -i -X DELETE -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/kudu-connector
+PUT  hdp02:10200/connectors/kudu-connector/config
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "kudu-connector",
+  "config": {
+    "connector.class": "personal.leo.kafka_connect_kudu.KuduSinkConector",
+    "topics.regex": "hdp04.test.t6.*",
+    "masterAddresses": "test02",
+    "kuduTableName": "presto::s1.t6",
+    "key.converter": "personal.leo.kafka_connect_kudu.JSONObjectConverter",
+    "value.converter": "personal.leo.kafka_connect_kudu.JSONObjectConverter"
+  }
+}
+
+###
+
+
+
