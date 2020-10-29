@@ -133,6 +133,7 @@ public class KuduSyncer {
                 row.addLong(kuduColumnName, Long.parseLong(value));
                 break;
             case UNIXTIME_MICROS:
+//                TODO date类型转换会出现1970-01-01
 //                final Date date = DateUtils.parseDate(value, datePatterns);
                 row.addTimestamp(kuduColumnName, new Timestamp(Long.parseLong(value)));
                 break;
