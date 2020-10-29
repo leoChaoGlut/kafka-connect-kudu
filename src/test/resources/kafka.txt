@@ -5,6 +5,8 @@ bin/kafka-topics.sh --delete --topic __.* --bootstrap-server localhost:10001
 
 bin/kafka-topics.sh --list --bootstrap-server localhost:10001
 
+bin/kafka-console-consumer.sh --topic connect-offsets --from-beginning --bootstrap-server localhost:1000
+
 
 nohup bin/zookeeper-server-start.sh config/zookeeper.properties > zk.out 2>&1 &
 nohup bin/kafka-server-start.sh config/server.properties > kafka.out 2>&1 &

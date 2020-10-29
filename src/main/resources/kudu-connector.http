@@ -4,12 +4,12 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "kudu-connector",
+  "name": "kudu-connector-s1-t7",
   "config": {
     "connector.class": "personal.leo.kafka_connect_kudu.KuduSinkConector",
     "topics.regex": "^hdp04\\.test[0-9]*\\.t7_[0-9]+$",
     "masterAddresses": "test02",
-    "kuduTableName": "presto::s1.t6",
+    "kuduTableName": "presto::s1.t7",
     "key.converter": "personal.leo.kafka_connect_kudu.JSONObjectConverter",
     "value.converter": "personal.leo.kafka_connect_kudu.JSONObjectConverter"
   }
@@ -18,7 +18,7 @@ Content-Type: application/json
 ###
 
 # curl -i -X DELETE -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/kudu-connector
-DELETE hdp09:10200/connectors/kudu-connector
+DELETE hdp09:10200/connectors/kudu-connector-s1-t7
 Accept: application/json
 Content-Type: application/json
 

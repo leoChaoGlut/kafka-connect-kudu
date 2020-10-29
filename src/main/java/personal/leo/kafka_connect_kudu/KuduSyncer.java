@@ -31,6 +31,9 @@ public class KuduSyncer {
     private final KuduTable kuduTable;
 
     private final String masterAddresses;
+    /**
+     * TODO 需要非常明确topic和kuduTable的关系,否则可能出现数据错乱,需要拿kudu表名与topics.regex进行校验
+     */
     private final String kuduTableName;
     private final int maxBatchSize;
     //TODO 如果kudu插入有性能问题,可以考虑在update的时候,减轻服务端压力,做columnDiff,仅把更新的字段做upsert
