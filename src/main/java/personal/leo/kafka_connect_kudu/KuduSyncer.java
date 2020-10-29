@@ -2,6 +2,7 @@ package personal.leo.kafka_connect_kudu;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Type;
 import org.apache.kudu.client.*;
@@ -163,7 +164,7 @@ public class KuduSyncer {
 
 
     public void sync(List<Operation> operations) throws KuduException {
-        logger.info("sync: " + operations);
+        final StopWatch watch = StopWatch.createStarted();
         if (operations.isEmpty()) {
             return;
         }
@@ -179,6 +180,8 @@ public class KuduSyncer {
                 throw new RuntimeException("sync to kudu error:" + resp.getRowError());
             }
         }
+        watch.stop();
+        logger.info("sync: " + operations.size() + ",spend: " + watch);
     }
 
     public void stop() throws KuduException {
