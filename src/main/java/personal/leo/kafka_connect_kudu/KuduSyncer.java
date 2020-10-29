@@ -106,7 +106,7 @@ public class KuduSyncer {
     /**
      * copy from org.apache.kudu.client.PartialRow.addObject(int, java.lang.Object)
      */
-    private void fillRow(ColumnSchema kuduColumn, Object srcColumnValue, PartialRow row) throws ParseException {
+    private void fillRow(ColumnSchema kuduColumn, Object srcColumnValue, PartialRow row) {
         final String kuduColumnName = kuduColumn.getName();
         final Type kuduColumnType = kuduColumn.getType();
         if (srcColumnValue == null) {
@@ -150,6 +150,7 @@ public class KuduSyncer {
                 row.addBinary(kuduColumnName, value.getBytes(StandardCharsets.UTF_8));
                 break;
             case DECIMAL:
+                // required "decimal.handling.mode": "string"
                 row.addDecimal(kuduColumnName, new BigDecimal(value));
                 break;
             default:

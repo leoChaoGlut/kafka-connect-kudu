@@ -3,3 +3,7 @@ curl -i -X DELETE -H "Accept:application/json" -H "Content-Type:application/json
 curl -i -X PUT -H "Content-Type:application/json" localhost: 8083/connectors/my-connector/config -d '{ "name": "my-connector", "config": { "connector.class": "MyConnector", "tasks.max": "3"} }'
 curl -i -X GET localhost: 8083/connectors/my-connector/tasks
 curl -i -X GET localhost: 8083/connectors/my-connector/status
+"database.include.list": "azkaban",
+"table.include.list": "execution_.*",
+"snapshot.mode": "initial",
+"snapshot.mode": "SCHEMA_ONLY"

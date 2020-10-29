@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class CommonTest {
     @Test
     public void test() {
-        String regex = "hdp04.test.t.*";
+        String regex = "^test[0-9]*\\.t7[0-9]+$";
         Pattern pattern = Pattern.compile(regex);
     }
 
