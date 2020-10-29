@@ -45,6 +45,13 @@ Content-Type: application/json
 ###
 
 # curl -i -X DELETE -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/kudu-connector
+DELETE hdp09:10200/connectors/sink-kudu-s1-execution_jobs
+Accept: application/json
+Content-Type: application/json
+
+###
+
+# curl -i -X DELETE -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/kudu-connector
 PUT  hdp09:10200/connectors/kudu-connector/config
 Accept: application/json
 Content-Type: application/json
