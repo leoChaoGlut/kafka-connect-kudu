@@ -64,6 +64,7 @@ public class KuduSinkTask extends SinkTask {
                     operations.clear();
                 }
             } catch (Exception e) {
+                //TODO 邮件告警
                 logger.error("put error", e);
                 if (reporter != null) {
                     // Send errant record to error reporter
