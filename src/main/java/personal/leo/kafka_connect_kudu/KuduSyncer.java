@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -39,6 +38,7 @@ public class KuduSyncer {
     private final int maxBatchSize;
     //TODO 如果kudu插入有性能问题,可以考虑在update的时候,减轻服务端压力,做columnDiff,仅把更新的字段做upsert
     private final boolean onlySyncValueChangedColumns;
+    private final boolean logEnabled;
     private final Map<String, ColumnSchema> kuduColumnNameMapKuduColumn;
 
 
@@ -47,6 +47,7 @@ public class KuduSyncer {
         kuduTableName = props.get(PropKeys.kuduTableName);
         maxBatchSize = Integer.parseInt(props.getOrDefault(PropKeys.maxBatchSize, PropDefaultValues.maxBatchSize)) + 10;//随便加几个size,防止kudu 报 超出maxBatchSize的错误
         onlySyncValueChangedColumns = Boolean.parseBoolean(props.getOrDefault(PropKeys.onlySyncValueChangedColumns, PropDefaultValues.onlySyncValueChangedColumns));
+        logEnabled = Boolean.parseBoolean(props.getOrDefault(PropKeys.logEnabled, PropDefaultValues.logEnabled));
 
         kuduClient = new KuduClient.KuduClientBuilder(masterAddresses).build();
 
@@ -60,7 +61,7 @@ public class KuduSyncer {
     }
 
 
-    public Operation createOperation(JSONObject payload) throws ParseException {
+    public Operation createOperation(JSONObject payload) {
         final Map<String, Object> beforeColumnNameMapColumnValue = payload.getObject(PayloadKeys.before, Map.class);
         final Map<String, Object> afterColumnNameMapColumnValue = payload.getObject(PayloadKeys.after, Map.class);
 
@@ -181,7 +182,9 @@ public class KuduSyncer {
             }
         }
         watch.stop();
-        logger.info("sync: " + operations.size() + ",spend: " + watch);
+        if (logEnabled) {
+            logger.info("sync: " + operations.size() + ",to " + kuduTableName + ",spend: " + watch);
+        }
     }
 
     public void stop() throws KuduException {

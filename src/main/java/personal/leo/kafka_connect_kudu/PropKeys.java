@@ -5,4 +5,5 @@ public interface PropKeys {
     String kuduTableName = "kuduTableName";
     String maxBatchSize = "maxBatchSize";
     String onlySyncValueChangedColumns = "onlySyncValueChangedColumns";
+    String logEnabled = "logEnabled";
 }

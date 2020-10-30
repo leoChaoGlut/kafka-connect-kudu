@@ -56,7 +56,6 @@ public class KuduSinkTask extends SinkTask {
                 if (payload == null) {
                     continue;
                 }
-//                logger.info(payload.toJSONString());
                 final Operation operation = kuduSyncer.createOperation(payload);
                 operations.add(operation);
 
