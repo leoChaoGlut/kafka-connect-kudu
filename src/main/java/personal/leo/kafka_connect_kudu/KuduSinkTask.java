@@ -91,6 +91,10 @@ public class KuduSinkTask extends SinkTask {
 
     @Override
     public void stop() {
+        if (kuduSyncer == null) {
+            return;
+        }
+
         try {
             kuduSyncer.stop();
         } catch (KuduException e) {
