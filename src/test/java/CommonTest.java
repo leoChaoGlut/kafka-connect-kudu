@@ -12,6 +12,7 @@ public class CommonTest {
     public void test() {
         String regex = "^test[0-9]*\\.t7[0-9]+$";
         Pattern pattern = Pattern.compile(regex);
+        int a = 1112223334;
     }
 
     @Test

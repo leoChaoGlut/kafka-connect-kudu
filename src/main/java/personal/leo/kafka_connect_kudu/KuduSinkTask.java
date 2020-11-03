@@ -19,6 +19,8 @@ public class KuduSinkTask extends SinkTask {
     private KuduSyncer kuduSyncer;
     private ErrantRecordReporter reporter;
     private int maxBatchSize;
+    private KafkaProducer kafkaProducer;
+
 
     @Override
     public void start(Map<String, String> props) {
@@ -31,6 +33,8 @@ public class KuduSinkTask extends SinkTask {
         }
 
         maxBatchSize = Integer.parseInt(props.getOrDefault(PropKeys.maxBatchSize, PropDefaultValues.maxBatchSize));
+
+        kafkaProducer = new KafkaProducer(props);
 
         try {
             kuduSyncer = new KuduSyncer(props);
@@ -56,6 +60,9 @@ public class KuduSinkTask extends SinkTask {
                 if (payload == null) {
                     continue;
                 }
+
+                kafkaProducer.send(payload.toJSONString());
+
                 final Operation operation = kuduSyncer.createOperation(payload);
                 operations.add(operation);
 

@@ -6,4 +6,5 @@ public interface PropKeys {
     String maxBatchSize = "maxBatchSize";
     String onlySyncValueChangedColumns = "onlySyncValueChangedColumns";
     String logEnabled = "logEnabled";
+    String kafkaBrokers = "kafkaBrokers";
 }

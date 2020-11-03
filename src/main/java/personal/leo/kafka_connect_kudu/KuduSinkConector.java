@@ -43,7 +43,8 @@ public class KuduSinkConector extends SinkConnector {
     public ConfigDef config() {
         return new ConfigDef()
                 .define(PropKeys.masterAddresses, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, "Kudu " + PropKeys.masterAddresses)
-                .define(PropKeys.kuduTableName, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, PropKeys.masterAddresses)
+                .define(PropKeys.kuduTableName, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, PropKeys.kuduTableName)
+                .define(PropKeys.kafkaBrokers, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, PropKeys.kafkaBrokers)
                 ;
     }
 
@@ -55,7 +56,20 @@ public class KuduSinkConector extends SinkConnector {
      */
     @Override
     public Config validate(Map<String, String> connectorConfigs) {
+        logger.info("validate: " + connectorConfigs);
         final Config config = super.validate(connectorConfigs);
+        validateKudu(connectorConfigs);
+        validateKafka(connectorConfigs);
+        return config;
+    }
+
+    private void validateKafka(Map<String, String> connectorConfigs) {
+        final KafkaProducer kafkaProducer = new KafkaProducer(connectorConfigs);
+        kafkaProducer.getProducer().flush();
+        kafkaProducer.close();
+    }
+
+    private void validateKudu(Map<String, String> connectorConfigs) {
         final String masterAddresses = connectorConfigs.get(PropKeys.masterAddresses);
         final String kuduTableName = connectorConfigs.get(PropKeys.kuduTableName);
         KuduClient kuduClient = null;
@@ -79,8 +93,6 @@ public class KuduSinkConector extends SinkConnector {
                 }
             }
         }
-
-        return config;
     }
 
     @Override
