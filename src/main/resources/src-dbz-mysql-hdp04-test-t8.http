@@ -1,0 +1,45 @@
+POST test01:10500/connectors/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "src-dbz-mysql-hdp04-test-test8",
+  "config": {
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "database.hostname": "hdp04",
+    "database.port": "3306",
+    "database.user": "root",
+    "database.password": "1",
+    "database.server.id": "172016101001",
+    "database.server.name": "hdp04",
+    "database.include.list": "^test[0-9]*$",
+    "table.include.list": "^test[0-9]*\\.t8_[0-9]+$",
+    "decimal.handling.mode": "string",
+    "database.history.kafka.bootstrap.servers": "test01:10001,test02:10001,test03:10001",
+    "database.history.kafka.topic": "history.src-dbz-mysql-hdp04-test-test8"
+  }
+}
+
+###
+
+# curl -i -X DELETE -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/kudu-connector
+DELETE test01:10500/connectors/src-dbz-mysql-hdp04-test-test8
+Accept: application/json
+Content-Type: application/json
+
+
+###
+
+GET   test01:10500/connectors
+
+###
+GET   test01:10500/connectors/src-dbz-mysql-hdp04-test-test7/status
+
+###
+GET   test01:10500/connectors/sink-kudu-s1-t7/tasks
+
+###
+POST   test01:10500/connectors/src-dbz-mysql-hdp04-test-test7/restart
+
+###
+

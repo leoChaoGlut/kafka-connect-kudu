@@ -19,9 +19,9 @@ Content-Type: application/json
 ###
 
 
-
+###
 # curl -i -X DELETE -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/kudu-connector
-DELETE test01:10500/connectors/sink-kudu-s1-t1
+DELETE test01:10500/connectors/sink-kudu-s1-t7
 Accept: application/json
 Content-Type: application/json
 

@@ -34,7 +34,7 @@ public class KuduSinkTask extends SinkTask {
             reporter = null;
         }
 
-        sendDataToKuduTableNameTopic = Boolean.parseBoolean(props.getOrDefault(PropKeys.sendDataToKuduTableNameTopic, Boolean.FALSE.toString()));
+        sendDataToKuduTableNameTopic = Boolean.parseBoolean(props.getOrDefault(PropKeys.sendDataToKuduTableNameTopic, Boolean.TRUE.toString()));
         inputMsgType = InputMsgType.valueOf(props.get(PropKeys.inputMsgType));
 
         maxBatchSize = Integer.parseInt(props.getOrDefault(PropKeys.maxBatchSize, PropDefaultValues.maxBatchSize));
