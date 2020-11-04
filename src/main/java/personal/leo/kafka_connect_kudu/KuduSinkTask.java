@@ -1,5 +1,6 @@
 package personal.leo.kafka_connect_kudu;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.kafka.connect.sink.ErrantRecordReporter;
 import org.apache.kafka.connect.sink.SinkRecord;
@@ -20,7 +21,8 @@ public class KuduSinkTask extends SinkTask {
     private ErrantRecordReporter reporter;
     private int maxBatchSize;
     private KafkaProducer kafkaProducer;
-
+    private boolean sendDataToKuduTableNameTopic;
+    private InputMsgType inputMsgType;
 
     @Override
     public void start(Map<String, String> props) {
@@ -31,6 +33,9 @@ public class KuduSinkTask extends SinkTask {
             // Will occur in Connect runtimes earlier than 2.6
             reporter = null;
         }
+
+        sendDataToKuduTableNameTopic = Boolean.parseBoolean(props.getOrDefault(PropKeys.sendDataToKuduTableNameTopic, Boolean.FALSE.toString()));
+        inputMsgType = InputMsgType.valueOf(props.get(PropKeys.inputMsgType));
 
         maxBatchSize = Integer.parseInt(props.getOrDefault(PropKeys.maxBatchSize, PropDefaultValues.maxBatchSize));
 
@@ -52,18 +57,40 @@ public class KuduSinkTask extends SinkTask {
                 if (record.value() == null) {
                     continue;
                 }
-                final JSONObject value = (JSONObject) record.value();
-                if (value == null) {
-                    continue;
-                }
-                final JSONObject payload = value.getJSONObject(PayloadKeys.payload);
-                if (payload == null) {
-                    continue;
+
+                final Operation operation;
+                switch (inputMsgType) {
+                    case binlog:
+                        final JSONObject value = (JSONObject) record.value();
+                        if (value == null) {
+                            continue;
+                        }
+
+                        final JSONObject payload = value.getJSONObject(PayloadKeys.payload);
+                        if (payload == null) {
+                            continue;
+                        }
+
+                        if (sendDataToKuduTableNameTopic) {
+                            //只取insert,update的after部分,delete的不取
+                            final JSONObject after = payload.getJSONObject(PayloadKeys.after);
+                            if (after != null) {
+                                kafkaProducer.send(after.toJSONString());
+                            }
+                        }
+
+                        operation = kuduSyncer.createOperationByPayload(payload);
+                        break;
+                    case kafkaMsg:
+                        final String json = (String) record.value();
+                        final Map dataSet = JSON.parseObject(json, Map.class);
+                        operation = kuduSyncer.createOperationByDataSet(dataSet);
+                        break;
+                    default:
+                        throw new RuntimeException("not supported: " + inputMsgType);
                 }
 
-                kafkaProducer.send(payload.toJSONString());
 
-                final Operation operation = kuduSyncer.createOperation(payload);
                 operations.add(operation);
 
                 if (operations.size() >= maxBatchSize) {

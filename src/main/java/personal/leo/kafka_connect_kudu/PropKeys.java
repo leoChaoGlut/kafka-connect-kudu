@@ -7,4 +7,6 @@ public interface PropKeys {
     String onlySyncValueChangedColumns = "onlySyncValueChangedColumns";
     String logEnabled = "logEnabled";
     String kafkaBrokers = "kafkaBrokers";
+    String sendDataToKuduTableNameTopic = "sendDataToKuduTableNameTopic";
+    String inputMsgType = "inputMsgType";
 }

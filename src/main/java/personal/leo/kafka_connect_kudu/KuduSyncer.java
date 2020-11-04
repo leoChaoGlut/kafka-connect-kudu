@@ -61,7 +61,7 @@ public class KuduSyncer {
     }
 
 
-    public Operation createOperation(JSONObject payload) {
+    public Operation createOperationByPayload(JSONObject payload) {
         final Map<String, Object> beforeColumnNameMapColumnValue = payload.getObject(PayloadKeys.before, Map.class);
         final Map<String, Object> afterColumnNameMapColumnValue = payload.getObject(PayloadKeys.after, Map.class);
 
@@ -95,6 +95,33 @@ public class KuduSyncer {
             } else {
                 fillRow(kuduColumn, srcColumnValue, operation.getRow());
 //                row.addObject(kuduColumn.getName(), srcColumnValue);
+                if (!hasAddData) {
+                    hasAddData = true;
+                }
+            }
+        }
+
+        if (hasAddData) {
+            return operation;
+        } else {
+            throw new RuntimeException("no column value be set,please confirm the topics are match the kudu table: " + kuduTableName);
+        }
+    }
+
+
+    public Operation createOperationByDataSet(final Map<String, Object> dataSet) {
+        final Operation operation = kuduTable.newUpsert();
+        boolean hasAddData = false;
+        for (Map.Entry<String, Object> entry : dataSet.entrySet()) {
+            final String columnName = entry.getKey();
+            final Object columnValue = entry.getValue();
+            final ColumnSchema kuduColumn = kuduColumnNameMapKuduColumn.get(columnName);
+            if (kuduColumn == null) {
+//                throw new RuntimeException("no column found for : " + columnName);
+//                TODO 发现不存在的列,可能源库出现变更,需要发邮件通知
+            } else {
+                fillRow(kuduColumn, columnValue, operation.getRow());
+//                row.addObject(kuduColumn.getName(), columnValue);
                 if (!hasAddData) {
                     hasAddData = true;
                 }

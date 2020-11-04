@@ -1,12 +1,23 @@
-CREATE TABLE kudu.s1.t8
+CREATE TABLE kudu.s1.t7
 (
     c1 int WITH (primary_key = true),
-    c2 decimal(16, 4) with(nullable= true)
+    c2 decimal(10, 5) with(nullable= true)
 )
 WITH (
     partition_by_hash_columns = ARRAY['c1'],
     partition_by_hash_buckets = 2
 );
+
+CREATE TABLE kudu.s1.t1
+(
+    c1  int WITH (primary_key = true),
+    sc2 decimal(10, 5) with(nullable= true)
+)
+WITH (
+    partition_by_hash_columns = ARRAY['c1'],
+    partition_by_hash_buckets = 2
+);
+
 
 create table kudu.s1.execution_jobs
 (

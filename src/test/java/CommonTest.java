@@ -44,7 +44,17 @@ public class CommonTest {
                 "}";
         final JSONObject payload = JSON.parseObject(json);
         final Map<String, Object> before = payload.getObject("before1", Map.class);
+        System.out.println(JSON.toJSONString(payload.getInnerMap()));
         System.out.println(before);
+    }
+
+    @Test
+    public void test11() {
+        String json = "{\"name\":\"aa\",\"id\":6}";
+        final JSONObject afterData = JSON.parseObject(json);
+        final JSONObject aa = afterData.getJSONObject("aa");
+        System.out.println(aa);
+        System.out.println(afterData.getInnerMap());
     }
 
     @Test

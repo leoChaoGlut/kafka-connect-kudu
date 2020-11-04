@@ -45,6 +45,7 @@ public class KuduSinkConector extends SinkConnector {
                 .define(PropKeys.masterAddresses, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, "Kudu " + PropKeys.masterAddresses)
                 .define(PropKeys.kuduTableName, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, PropKeys.kuduTableName)
                 .define(PropKeys.kafkaBrokers, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, PropKeys.kafkaBrokers)
+                .define(PropKeys.inputMsgType, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, PropKeys.inputMsgType)
                 ;
     }
 
@@ -72,6 +73,8 @@ public class KuduSinkConector extends SinkConnector {
     private void validateKudu(Map<String, String> connectorConfigs) {
         final String masterAddresses = connectorConfigs.get(PropKeys.masterAddresses);
         final String kuduTableName = connectorConfigs.get(PropKeys.kuduTableName);
+//        final boolean sendDataToKuduTableNameTopic = Boolean.parseBoolean(connectorConfigs.get(PropKeys.sendDataToKuduTableNameTopic));
+        InputMsgType inputMsgType = InputMsgType.valueOf(connectorConfigs.get(PropKeys.inputMsgType));
         KuduClient kuduClient = null;
         try {
             kuduClient = new KuduClient.KuduClientBuilder(masterAddresses).build();
