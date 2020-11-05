@@ -23,7 +23,6 @@ public class KuduSinkTask extends SinkTask {
     private KafkaProducer kafkaProducer;
     private boolean sendDataToKuduTableNameTopic;
     private InputMsgType inputMsgType;
-    private boolean logEnabled;
 
     @Override
     public void start(Map<String, String> props) {
@@ -37,7 +36,6 @@ public class KuduSinkTask extends SinkTask {
 
         sendDataToKuduTableNameTopic = Boolean.parseBoolean(props.getOrDefault(PropKeys.sendDataToKuduTableNameTopic, Boolean.TRUE.toString()));
         inputMsgType = InputMsgType.valueOf(props.get(PropKeys.inputMsgType));
-        logEnabled = Boolean.parseBoolean(props.getOrDefault(PropKeys.logEnabled, PropDefaultValues.logEnabled));
         maxBatchSize = Integer.parseInt(props.getOrDefault(PropKeys.maxBatchSize, PropDefaultValues.maxBatchSize));
 
         kafkaProducer = new KafkaProducer(props);
@@ -57,10 +55,6 @@ public class KuduSinkTask extends SinkTask {
             try {
                 if (record.value() == null) {
                     continue;
-                }
-
-                if (logEnabled) {
-                    logger.info(record.value().toString());
                 }
 
                 final Operation operation;
