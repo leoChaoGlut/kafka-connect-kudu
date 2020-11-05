@@ -4,27 +4,28 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "sink-kudu-s1-execution_flows",
+  "name": "sink-kudu-s1-s_sum",
   "config": {
     "connector.class": "personal.leo.kafka_connect_kudu.KuduSinkConector",
-    "topics.regex": "hdp04\\.azkaban\\.execution_flows",
+    "topics.regex": "s_sum",
     "masterAddresses": "test01:7051,test02:7051,test03:7051",
-    "kuduTableName": "presto::s1.execution_flows",
-    "key.converter": "personal.leo.kafka_connect_kudu.JSONObjectConverter",
-    "value.converter": "personal.leo.kafka_connect_kudu.JSONObjectConverter"
+    "kuduTableName": "presto.s1.s_sum",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "kafkaBrokers": "test01:10001,test02:10001,test03:10001",
+    "inputMsgType": "kafkaMsg"
   }
 }
 
+
 ###
-
-
-
 # curl -i -X DELETE -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/kudu-connector
-DELETE test01:10500/connectors/sink-kudu-s1-execution_flows
+DELETE test01:10500/connectors/sink-kudu-s1-s_sum
 Accept: application/json
 Content-Type: application/json
 
 ###
+GET   test01:10500/connectors
 
-
+###
 

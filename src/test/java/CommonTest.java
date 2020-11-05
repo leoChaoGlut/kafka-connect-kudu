@@ -1,9 +1,8 @@
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.kafka.connect.storage.StringConverter;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -50,21 +49,17 @@ public class CommonTest {
 
     @Test
     public void test11() {
-        String json = "{\"name\":\"aa\",\"id\":6}";
-        final JSONObject afterData = JSON.parseObject(json);
-        final JSONObject aa = afterData.getJSONObject("aa");
-        System.out.println(aa);
-        System.out.println(afterData.getInnerMap());
+        String json = "{\"SHOP_NAME2\":\"shop1\",\"SUM_PAY_PRICE\":3.5999999999999996}";
+        final Map<String, Object> dataSet = JSON.parseObject(json, Map.class);
+        System.out.println(dataSet);
+        for (Map.Entry<String, Object> entry : dataSet.entrySet()) {
+            final String columnName = entry.getKey();
+            final Object columnValue = entry.getValue();
+        }
     }
 
     @Test
     public void test2() {
-        List<Integer> arr = new ArrayList<>();
-        arr.add(1);
-        System.out.println(arr.size());
-        arr.add(2);
-        System.out.println(arr.size());
-        arr.clear();
-        System.out.println(arr.size());
+        System.out.println(StringConverter.class.getCanonicalName());
     }
 }

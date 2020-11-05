@@ -13,7 +13,7 @@ Content-Type: application/json
     "database.server.id": "1",
     "database.server.name": "hdp04",
     "database.include.list": "^test[0-9]*$",
-    "table.include.list": "^test[0-9]*\\.t7_[0-9]+$,^test[0-9]*\\.t8_[0-9]+$",
+    "table.include.list": "^test[0-9]*\\.t7_[0-9]+$,^test[0-9]*\\.t8_[0-9]+$,^test[0-9]*\\.t9_[0-9]+$,^test[0-9]*\\.t10_[0-9]+$",
     "decimal.handling.mode": "string",
     "database.history.kafka.bootstrap.servers": "test01:10001,test02:10001,test03:10001",
     "database.history.kafka.topic": "history.src-dbz-mysql-hdp04"
@@ -33,13 +33,26 @@ Content-Type: application/json
 GET   test01:10500/connectors
 
 ###
-GET   test01:10500/connectors/src-dbz-mysql-hdp04-test-test7/status
+GET   test01:10500/connectors/src-dbz-mysql-hdp04/status
 
 ###
-GET   test01:10500/connectors/sink-kudu-s1-t7/tasks
+GET   test01:10500/connectors/src-dbz-mysql-hdp04/tasks
+Accept: application/json
+Content-Type: application/json
 
 ###
 POST   test01:10500/connectors/src-dbz-mysql-hdp04-test-test7/restart
+
+###
+
+# curl -H "Accept:application/json" localhost:8083/connectors/
+GET  test01:10500/connectors/
+Accept: application/json
+
+###
+
+# curl -i -X GET -H "Accept:application/json" test01:10500/connector-plugins
+GET test01:10500/connectors/src-dbz-mysql-hdp04
 
 ###
 

@@ -4,32 +4,29 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "src-dbz-mysql-hdp04-azkaban-execution_flows",
+  "name": "sink-kudu-s1-t10",
   "config": {
-    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
-    "database.hostname": "hdp04",
-    "database.port": "3306",
-    "database.user": "root",
-    "database.password": "1",
-    "database.server.id": "3",
-    "database.server.name": "hdp04",
-    "database.include.list": "azkaban",
-    "table.include.list": "azkaban\\.execution_flows",
-    "decimal.handling.mode": "string",
-    "database.history.kafka.bootstrap.servers": "hdp09:10001",
-    "database.history.kafka.topic": "history.src-dbz-mysql-hdp04-azkaban-execution_flows"
+    "connector.class": "personal.leo.kafka_connect_kudu.KuduSinkConector",
+    "topics.regex": "^hdp04\\.test[0-9]*\\.t10_[0-9]+$",
+    "masterAddresses": "test01:7051,test02:7051,test03:7051",
+    "kuduTableName": "presto.s1.t10",
+    "key.converter": "personal.leo.kafka_connect_kudu.JSONObjectConverter",
+    "value.converter": "personal.leo.kafka_connect_kudu.JSONObjectConverter",
+    "kafkaBrokers": "test01:10001,test02:10001,test03:10001",
+    "inputMsgType": "binlog"
   }
 }
 
 ###
 
+
+
 # curl -i -X DELETE -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/kudu-connector
-DELETE test01:10500/connectors/src-dbz-mysql-hdp04-azkaban-execution_flows
+DELETE test01:10500/connectors/sink-kudu-s1-t10
 Accept: application/json
 Content-Type: application/json
 
 ###
-
 GET   test01:10500/connectors
 
 ###

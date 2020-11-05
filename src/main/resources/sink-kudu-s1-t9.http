@@ -4,15 +4,16 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "sink-kudu-s1-execution_jobs",
+  "name": "sink-kudu-s1-t9",
   "config": {
     "connector.class": "personal.leo.kafka_connect_kudu.KuduSinkConector",
-    "topics.regex": "hdp04\\.azkaban\\.execution_jobs",
+    "topics.regex": "^hdp04\\.test[0-9]*\\.t9_[0-9]+$",
     "masterAddresses": "test01:7051,test02:7051,test03:7051",
-    "kuduTableName": "presto::s1.execution_jobs",
+    "kuduTableName": "presto.s1.t9",
     "key.converter": "personal.leo.kafka_connect_kudu.JSONObjectConverter",
     "value.converter": "personal.leo.kafka_connect_kudu.JSONObjectConverter",
-    "kafkaBrokers": "test01:10001,test02:10001,test03:10001"
+    "kafkaBrokers": "test01:10001,test02:10001,test03:10001",
+    "inputMsgType": "binlog"
   }
 }
 
@@ -21,30 +22,15 @@ Content-Type: application/json
 
 
 # curl -i -X DELETE -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/kudu-connector
-DELETE test01:10500/connectors/sink-kudu-s1-execution_jobs
+DELETE test01:10500/connectors/sink-kudu-s1-t9
 Accept: application/json
 Content-Type: application/json
 
 ###
-
-# curl -i -X DELETE -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/kudu-connector
-PUT  test01:10500/connectors/kudu-connector/config
-Accept: application/json
-Content-Type: application/json
-
-{
-  "name": "kudu-connector",
-  "config": {
-    "connector.class": "personal.leo.kafka_connect_kudu.KuduSinkConector",
-    "topics.regex": "hdp04.test.t6.*",
-    "masterAddresses": "test02",
-    "kuduTableName": "presto::s1.t6",
-    "key.converter": "personal.leo.kafka_connect_kudu.JSONObjectConverter",
-    "value.converter": "personal.leo.kafka_connect_kudu.JSONObjectConverter"
-  }
-}
+GET   test01:10500/connectors
 
 ###
+GET   test01:10500/connectors/sink-kudu-s1-t4/tasks
 
-
+###
 

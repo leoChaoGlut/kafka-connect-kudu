@@ -1,9 +1,11 @@
 package personal.leo.kafka_connect_kudu;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.config.Config;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.connect.connector.Task;
 import org.apache.kafka.connect.sink.SinkConnector;
+import org.apache.kafka.connect.storage.StringConverter;
 import org.apache.kudu.client.KuduClient;
 import org.apache.kudu.client.KuduException;
 import org.slf4j.Logger;
@@ -65,6 +67,37 @@ public class KuduSinkConector extends SinkConnector {
     }
 
     private void validateKafka(Map<String, String> connectorConfigs) {
+        final String keyConverter = connectorConfigs.get(PropKeys.keyConverter);
+        final String valueConverter = connectorConfigs.get(PropKeys.valueConverter);
+        final InputMsgType inputMsgType = InputMsgType.valueOf(connectorConfigs.get(PropKeys.inputMsgType));
+        final String legalKeyConverter, legalValueConverter;
+        //TODO 需要确定key.converter和value.converter是否必填,如果非必填,可自行根据inputMsgType设置
+        switch (inputMsgType) {
+            case binlog:
+                legalKeyConverter = JSONObjectConverter.class.getCanonicalName();
+                legalValueConverter = JSONObjectConverter.class.getCanonicalName();
+                if (!StringUtils.equals(legalKeyConverter, keyConverter)) {
+                    throw new RuntimeException("keyConverter only support:" + legalKeyConverter + " for inputMsgType:" + inputMsgType);
+                }
+                if (!StringUtils.equals(legalValueConverter, valueConverter)) {
+                    throw new RuntimeException("valueConverter only support:" + legalValueConverter + " for inputMsgType:" + inputMsgType);
+                }
+                break;
+            case kafkaMsg:
+                legalKeyConverter = StringConverter.class.getCanonicalName();
+                legalValueConverter = StringConverter.class.getCanonicalName();
+                if (!StringUtils.equals(legalKeyConverter, keyConverter)) {
+                    throw new RuntimeException("keyConverter only support:" + legalKeyConverter + " for inputMsgType:" + inputMsgType);
+                }
+                if (!StringUtils.equals(legalValueConverter, valueConverter)) {
+                    throw new RuntimeException("valueConverter only support:" + legalValueConverter + " for inputMsgType:" + inputMsgType);
+                }
+                break;
+            default:
+                throw new RuntimeException("not supported:" + inputMsgType);
+        }
+
+
         final KafkaProducer kafkaProducer = new KafkaProducer(connectorConfigs);
         kafkaProducer.getProducer().flush();
         kafkaProducer.close();

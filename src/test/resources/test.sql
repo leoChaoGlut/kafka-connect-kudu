@@ -1,7 +1,7 @@
-CREATE TABLE kudu.s1.t7
+CREATE TABLE kudu.s1.t10
 (
     c1 int WITH (primary_key = true),
-    c2 decimal(10, 5) with(nullable= true)
+    c2 double with(nullable= true)
 )
 WITH (
     partition_by_hash_columns = ARRAY['c1'],
