@@ -57,7 +57,7 @@ public class KuduSyncer {
         session.setFlushMode(SessionConfiguration.FlushMode.MANUAL_FLUSH);
         session.setMutationBufferSpace(maxBatchSize);
 
-        kuduColumnNameMapKuduColumn = kuduTable.getSchema().getColumns().stream().collect(Collectors.toMap(ColumnSchema::getName, Function.identity()));
+        kuduColumnNameMapKuduColumn = kuduTable.getSchema().getColumns().stream().collect(Collectors.toMap(columnSchema -> columnSchema.getName().toLowerCase(), Function.identity()));
     }
 
 
@@ -86,7 +86,7 @@ public class KuduSyncer {
 
         boolean hasAddData = false;
         for (Map.Entry<String, Object> entry : columnNameMapColumnValue.entrySet()) {
-            final String srcColumnName = entry.getKey();
+            final String srcColumnName = entry.getKey().toLowerCase();
             final Object srcColumnValue = entry.getValue();
             final ColumnSchema kuduColumn = kuduColumnNameMapKuduColumn.get(srcColumnName);
             if (kuduColumn == null) {
