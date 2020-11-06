@@ -2,6 +2,7 @@ package personal.leo.kafka_connect_kudu;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Type;
@@ -12,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -19,11 +22,11 @@ import java.util.stream.Collectors;
 
 public class KuduSyncer {
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private static final String[] datePatterns = {
+    public static final String[] datePatterns = {
             DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.getPattern(),
             DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.getPattern(),
             DateFormatUtils.ISO_8601_EXTENDED_DATE_FORMAT.getPattern(),
-            "yyyy-MM-dd HH:mm:ss"
+            "yyyy-MM-dd HH:mm:ss",
     };
 
     private final KuduClient kuduClient;
@@ -167,8 +170,20 @@ public class KuduSyncer {
                 break;
             case UNIXTIME_MICROS:
 //                TODO date类型转换会出现1970-01-01
-//                final Date date = DateUtils.parseDate(value, datePatterns);
-                row.addTimestamp(kuduColumnName, new Timestamp(Long.parseLong(value)));
+                long timestamp;
+                try {
+                    timestamp = Long.parseLong(value);
+                } catch (NumberFormatException e) {
+                    logger.error("parse long error: " + value);
+                    try {
+                        final Date date = DateUtils.parseDate(value, datePatterns);
+                        timestamp = date.getTime();
+                    } catch (ParseException ex) {
+                        throw new RuntimeException("parse date error:" + value);
+                    }
+                }
+
+                row.addTimestamp(kuduColumnName, new Timestamp(timestamp));
                 break;
             case FLOAT:
                 row.addFloat(kuduColumnName, Float.parseFloat(value));

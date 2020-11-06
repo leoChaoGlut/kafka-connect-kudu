@@ -10,7 +10,7 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.util.*;
 
-public class PartitionGeneratorTest {
+public class PartitionProcedureBuilder {
     Statement statement;
 
     @Before
