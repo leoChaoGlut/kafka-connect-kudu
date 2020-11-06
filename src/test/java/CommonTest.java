@@ -1,12 +1,11 @@
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
+import personal.leo.kafka_connect_kudu.KuduSyncer;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -65,8 +64,13 @@ public class CommonTest {
 
     @Test
     public void test2() throws ParseException {
-        final Date date = DateUtils.parseDate("2020-07-10T18:18:52Z", DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.getPattern());
-        System.out.println(date);
+        final String dateStr = "2020-07-10T18:18:52Z";
+        System.out.println(DateUtils.parseDate(dateStr, KuduSyncer.datePatterns));
+        System.out.println(DateUtils.parseDate(dateStr, Locale.CHINA, KuduSyncer.datePatterns));
+        System.out.println(DateUtils.parseDate(dateStr, Locale.ENGLISH, KuduSyncer.datePatterns));
+        System.out.println(DateUtils.parseDate(dateStr, Locale.CHINESE, KuduSyncer.datePatterns));
+        System.out.println(DateUtils.parseDate(dateStr, Locale.ROOT, KuduSyncer.datePatterns));
+        System.out.println(DateUtils.parseDate(dateStr, Locale.UK, KuduSyncer.datePatterns));
     }
 
     @Test

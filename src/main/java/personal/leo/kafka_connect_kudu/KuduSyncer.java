@@ -16,7 +16,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -44,7 +43,6 @@ public class KuduSyncer {
     private final boolean onlySyncValueChangedColumns;
     private final boolean logEnabled;
     private final Map<String, ColumnSchema> kuduColumnNameMapKuduColumn;
-    private final Locale locale;
 
 
     public KuduSyncer(Map<String, String> props) throws KuduException {
@@ -53,7 +51,6 @@ public class KuduSyncer {
         maxBatchSize = Integer.parseInt(props.getOrDefault(PropKeys.maxBatchSize, PropDefaultValues.maxBatchSize)) + 10;//随便加几个size,防止kudu 报 超出maxBatchSize的错误
         onlySyncValueChangedColumns = Boolean.parseBoolean(props.getOrDefault(PropKeys.onlySyncValueChangedColumns, PropDefaultValues.onlySyncValueChangedColumns));
         logEnabled = Boolean.parseBoolean(props.getOrDefault(PropKeys.logEnabled, PropDefaultValues.logEnabled));
-        locale = Locale.forLanguageTag(props.getOrDefault(PropKeys.locale, PropDefaultValues.locale));
 
 
         kuduClient = new KuduClient.KuduClientBuilder(masterAddresses).build();
@@ -179,7 +176,7 @@ public class KuduSyncer {
                     timestamp = Long.parseLong(value);
                 } catch (NumberFormatException e) {
                     try {
-                        final Date date = DateUtils.parseDate(value, locale, datePatterns);
+                        final Date date = DateUtils.parseDate(value, datePatterns);
                         timestamp = date.getTime();
                     } catch (ParseException ex) {
                         throw new RuntimeException("parse date error:" + value);

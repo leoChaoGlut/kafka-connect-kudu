@@ -9,7 +9,6 @@ public interface PropKeys {
     String kafkaBrokers = "kafkaBrokers";
     String sendDataToKuduTableNameTopic = "sendDataToKuduTableNameTopic";
     String inputMsgType = "inputMsgType";
-    String locale = "locale";
 
     String keyConverter = "key.converter";
     String valueConverter = "value.converter";
