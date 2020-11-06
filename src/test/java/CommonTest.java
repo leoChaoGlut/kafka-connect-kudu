@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -79,5 +80,12 @@ public class CommonTest {
         }
         watch.stop();
         System.out.println(watch);
+    }
+
+    @Test
+    public void test4() throws ParseException {
+        System.out.println(Locale.CHINA.toLanguageTag());
+        System.out.println(Locale.CHINA);
+        System.out.println(Locale.forLanguageTag(Locale.CHINA.toLanguageTag()));
     }
 }
