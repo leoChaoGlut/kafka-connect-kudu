@@ -174,7 +174,6 @@ public class KuduSyncer {
                 try {
                     timestamp = Long.parseLong(value);
                 } catch (NumberFormatException e) {
-                    logger.error("parse long error: " + value);
                     try {
                         final Date date = DateUtils.parseDate(value, datePatterns);
                         timestamp = date.getTime();

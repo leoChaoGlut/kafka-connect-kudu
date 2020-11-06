@@ -2,6 +2,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 
 import java.text.ParseException;
@@ -65,5 +66,18 @@ public class CommonTest {
     public void test2() throws ParseException {
         final Date date = DateUtils.parseDate("2020-07-10T18:18:52Z", DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.getPattern());
         System.out.println(date);
+    }
+
+    @Test
+    public void test3() throws ParseException {
+        String l = "2020-07-10T18:18:52Z";
+        final StopWatch watch = StopWatch.createStarted();
+        try {
+            final long l1 = Long.parseLong(l);
+        } catch (NumberFormatException e) {
+
+        }
+        watch.stop();
+        System.out.println(watch);
     }
 }

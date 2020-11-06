@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ConnectRequestInfoBuilder {
+public class SourceRequestBodyBuilder {
     @Before
     public void before() {
 
@@ -15,8 +15,8 @@ public class ConnectRequestInfoBuilder {
 
     @Test
     public void source() {
-        final String databaseServerName = "uf6026for2zz2o3dt";
-        final String suffix = databaseServerName.substring(databaseServerName.length() - 4);
+        final String databaseServerName = "db";
+        final String suffix = databaseServerName.length() > 4 ? databaseServerName.substring(databaseServerName.length() - 4) : databaseServerName;
         final String connectName = "src-dbz-" + suffix;
         final List<String> databaseIncludeRegexList = Arrays.asList(
                 "s1",
@@ -33,9 +33,9 @@ public class ConnectRequestInfoBuilder {
 
         JSONObject config = new JSONObject();
         config.put("database.server.id", "1001");
-        config.put("database.hostname", "rm-uf674fhu106uuv32v.mysql.rds.aliyuncs.com");
-        config.put("database.user", "scm_read");
-        config.put("database.password", "KJKJjkjk123");
+        config.put("database.hostname", "host");
+        config.put("database.user", "user");
+        config.put("database.password", "password");
         config.put("database.server.name", databaseServerName);
         config.put("database.include.list", databaseIncludeRegex);
         config.put("table.include.list", tableIdIncludeRegex);
@@ -54,20 +54,18 @@ public class ConnectRequestInfoBuilder {
         System.out.println(requestJson.toJSONString());
     }
 
+
     private String buildTableIdIncludeRegex(List<String> tableIdIncludeRegexList) {
         return tableIdIncludeRegexList.stream()
-                .map(str -> StringUtils.replace(str, ".", "\\\\."))
+                .map(str -> StringUtils.replace(str, ".", "\\."))
                 .collect(Collectors.joining(","));
     }
 
     private String buildDatabaseIncludeRegex(List<String> databaseIncludeRegexList) {
         return databaseIncludeRegexList.stream()
-                .map(str -> StringUtils.replace(str, ".", "\\\\."))
+                .map(str -> StringUtils.replace(str, ".", "\\."))
                 .collect(Collectors.joining(","));
     }
 
-    @Test
-    public void sink() {
 
-    }
 }
