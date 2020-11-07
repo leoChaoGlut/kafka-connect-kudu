@@ -20,35 +20,13 @@ public class CommonTest {
 
     @Test
     public void test1() {
-        String json = "{\n" +
-                "  \"op\": \"u\",\n" +
-                "  \"before\": {\n" +
-                "    \"id\": 6,\n" +
-                "    \"name\": \"aa\"\n" +
-                "  },\n" +
-                "  \"after\": {\n" +
-                "    \"id\": 111\n" +
-                "  },\n" +
-                "  \"source\": {\n" +
-                "    \"thread\": 62021,\n" +
-                "    \"server_id\": 101,\n" +
-                "    \"version\": \"1.3.0.Final\",\n" +
-                "    \"file\": \"master.000003\",\n" +
-                "    \"connector\": \"mysql\",\n" +
-                "    \"pos\": 224583723,\n" +
-                "    \"name\": \"hdp04\",\n" +
-                "    \"row\": 0,\n" +
-                "    \"ts_ms\": 1603870760000,\n" +
-                "    \"snapshot\": \"false\",\n" +
-                "    \"db\": \"test\",\n" +
-                "    \"table\": \"t5\"\n" +
-                "  },\n" +
-                "  \"ts_ms\": 1603870760496\n" +
-                "}";
+        String json = "{\"before\":null,\"after\":{\"id\":1313871605318836225,\"org_id\":820,\"create_time\":1602115176000,\"creator_id\":17671723459,\"creator_name\":\"系统缴款\",\"update_time\":1602115176000,\"updator_id\":3604656,\"updator_name\":\"17671723459\",\"tenant_id\":null,\"bill_no\":\"POS003582020100750\",\"type\":\"SYSTEM\",\"store_id\":820,\"store_name\":\"武汉汀澜公馆店\",\"pos_id\":1300398693479882754,\"pos_code\":\"POS00358\",\"start_time\":1602107955000,\"total\":\"6.80\",\"difference\":\"0.00\",\"uploaded\":false},\"source\":{\"version\":\"1.3.0.Final\",\"connector\":\"mysql\",\"name\":\"uf6026for2zz2o3dt\",\"ts_ms\":0,\"snapshot\":\"true\",\"db\":\"newretail\",\"table\":\"nr_pos_payment_slip\",\"server_id\":0,\"gtid\":null,\"file\":\"mysql-bin.001644\",\"pos\":207806833,\"row\":0,\"thread\":null,\"query\":null},\"op\":\"c\",\"ts_ms\":1604729168418,\"transaction\":null}";
         final JSONObject payload = JSON.parseObject(json);
         final Map<String, Object> before = payload.getObject("before1", Map.class);
+        final Map<String, Object> before1 = payload.getObject("after", Map.class);
         System.out.println(JSON.toJSONString(payload.getInnerMap()));
         System.out.println(before);
+        System.out.println(before1);
     }
 
     @Test

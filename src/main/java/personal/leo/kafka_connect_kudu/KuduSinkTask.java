@@ -26,6 +26,7 @@ public class KuduSinkTask extends SinkTask {
     private InputMsgType inputMsgType;
     private EmailService emailService;
     private Map<String, String> props;
+    private boolean includeSchemaChanges;
 
     @Override
     public void start(Map<String, String> props) {
@@ -41,6 +42,7 @@ public class KuduSinkTask extends SinkTask {
         sendDataToKuduTableNameTopic = Boolean.parseBoolean(props.getOrDefault(PropKeys.sendDataToKuduTableNameTopic, PropDefaultValues.sendDataToKuduTableNameTopic));
         inputMsgType = InputMsgType.valueOf(props.get(PropKeys.inputMsgType));
         maxBatchSize = Integer.parseInt(props.getOrDefault(PropKeys.maxBatchSize, PropDefaultValues.maxBatchSize));
+        includeSchemaChanges = Boolean.parseBoolean(props.getOrDefault(PropKeys.includeSchemaChanges, PropDefaultValues.includeSchemaChanges));
 
         emailService = new EmailService(
                 props.getOrDefault(PropKeys.emailHostName, PropDefaultValues.emailHostName),
@@ -77,7 +79,7 @@ public class KuduSinkTask extends SinkTask {
                             continue;
                         }
 
-                        final JSONObject payload = value.getJSONObject(PayloadKeys.payload);
+                        final JSONObject payload = includeSchemaChanges ? value.getJSONObject(PayloadKeys.payload) : value;
                         if (payload == null) {
                             continue;
                         }

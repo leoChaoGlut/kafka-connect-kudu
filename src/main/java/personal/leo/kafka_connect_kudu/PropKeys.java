@@ -17,6 +17,7 @@ public interface PropKeys {
     String emailTo = "emailTo";
 
 
+    String includeSchemaChanges = "includeSchemaChanges";
     String keyConverter = "key.converter";
     String valueConverter = "value.converter";
 }

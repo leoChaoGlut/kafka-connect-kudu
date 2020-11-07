@@ -12,4 +12,6 @@ public interface PropDefaultValues {
     String emailUser = "ypshengxian@163.com";
     String emailPassword = "YBYFNAGEYXJAGQMO";
     String emailTo = "liaochao@ypshengxian.com";
+
+    String includeSchemaChanges = "false";
 }
