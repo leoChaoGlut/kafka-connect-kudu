@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class CommonTest {
     @Test
     public void test() {
-        String regex = "^test[0-9]*\\.t7[0-9]+$";
+        String regex = "^ypsx_pay[0-9]+\\.refund[0-9]+$";
         Pattern pattern = Pattern.compile(regex);
         int a = 1112223334;
     }

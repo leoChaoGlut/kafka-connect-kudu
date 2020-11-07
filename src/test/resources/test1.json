@@ -1,20 +1,24 @@
-[
-  2020-10-29
-  10
-  :
-  46
-  :
-  02,
-  811
-] INFO Step 0: disabling autocommit, enabling repeatable read transactions, and setting lock wait timeout to 10 (io.debezium.connector.mysql.SnapshotReader: 278)
-[2020-10-29 10: 46: 02, 815] INFO Step 1: flush and obtain global read lock to prevent writes to database (io.debezium.connector.mysql.SnapshotReader: 312)
-[2020-10-29 10: 46: 02, 817] INFO Step 2: start transaction with consistent snapshot (io.debezium.connector.mysql.SnapshotReader: 337)
-[2020-10-29 10: 46: 02, 818] INFO Step 3: read binlog position of MySQL primary server (io.debezium.connector.mysql.SnapshotReader: 893)
-[2020-10-29 10: 46: 02, 821] INFO   using binlog 'master.000003' at position '226487482' (io.debezium.connector.mysql.SnapshotReader: 909)
-[2020-10-29 10: 46: 02, 821] INFO Step 4: read list of available databases (io.debezium.connector.mysql.SnapshotReader: 362)
-[2020-10-29 10: 46: 02, 822] INFO   list of available databases is: [information_schema, azkaban, canal_kudu_syncer, canal_manager, dim, dmp_dataservice, maxwell, mysql, performance_schema, ss2, superset, support, test, test2, ypsx_data_support, ypsx_dmp_metadata] (io.debezium.connector.mysql.SnapshotReader: 370)
-[2020-10-29 10: 46: 02, 823] INFO Step 5: read list of available tables in each database (io.debezium.connector.mysql.SnapshotReader: 381)
-[2020-10-29 10: 46: 02, 871] INFO Step 6: generating DROP and CREATE statements to reflect current database schemas: (io.debezium.connector.mysql.SnapshotReader: 489)
-[2020-10-29 10: 46: 05, 430] INFO Step 7: releasing global read lock to enable MySQL writes (io.debezium.connector.mysql.SnapshotReader: 559)
-[2020-10-29 10: 46: 05, 432] INFO Step 7: blocked writes to MySQL for a total of 00: 00: 02.614 (io.debezium.connector.mysql.SnapshotReader: 565)
-[2020-10-29 10: 46: 05, 434] INFO Step 8: scanning contents of 35 tables while still in transaction (io.debezium.connector.mysql.SnapshotReader: 582)
+scp /etc/hosts datamaster01:/etc/hosts
+scp /etc/hosts dataslave01: /etc/hosts
+scp /etc/hosts dataslave02:/etc/hosts
+scp /etc/hosts dataslave03: /etc/hosts
+scp /etc/hosts etl01:/etc/hosts
+scp /etc/hosts etl02: /etc/hosts
+scp /etc/hosts etl03:/etc/hosts
+scp /etc/hosts etl04: /etc/hosts
+scp /etc/hosts etl05:/etc/hosts
+scp /etc/hosts etl06: /etc/hosts
+scp /etc/hosts query01:/etc/hosts
+scp /etc/hosts query02: /etc/hosts
+scp /etc/hosts query03:/etc/hosts
+scp /etc/hosts query04: /etc/hosts
+scp /etc/hosts query05:/etc/hosts
+scp /etc/hosts query06: /etc/hosts
+scp /etc/hosts query07:/etc/hosts
+scp /etc/hosts query08: /etc/hosts
+scp /etc/hosts kudu1:/etc/hosts
+scp /etc/hosts kudu2: /etc/hosts
+scp /etc/hosts kudu3:/etc/hosts
+scp /etc/hosts mq1: /etc/hosts
+scp /etc/hosts mq2:/etc/hosts
+scp /etc/hosts mq3: /etc/hosts

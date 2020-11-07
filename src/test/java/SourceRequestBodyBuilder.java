@@ -44,6 +44,7 @@ public class SourceRequestBodyBuilder {
 
 //        don't mod
         config.put("decimal.handling.mode", "string");
+        config.put("database.serverTimezone", "UTC");
         config.put("connector.class", "io.debezium.connector.mysql.MySqlConnector");
         config.put("database.history.kafka.bootstrap.servers", "mq1:10001,mq2:10001,mq3:10001");
 

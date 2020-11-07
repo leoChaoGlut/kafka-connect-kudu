@@ -2,6 +2,7 @@ package personal.leo.kafka_connect_kudu;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.connect.sink.ErrantRecordReporter;
 import org.apache.kafka.connect.sink.SinkRecord;
 import org.apache.kafka.connect.sink.SinkTask;
@@ -23,6 +24,8 @@ public class KuduSinkTask extends SinkTask {
     private KafkaProducer kafkaProducer;
     private boolean sendDataToKuduTableNameTopic;
     private InputMsgType inputMsgType;
+    private EmailService emailService;
+    private Map<String, String> props;
 
     @Override
     public void start(Map<String, String> props) {
@@ -34,9 +37,18 @@ public class KuduSinkTask extends SinkTask {
             reporter = null;
         }
 
-        sendDataToKuduTableNameTopic = Boolean.parseBoolean(props.getOrDefault(PropKeys.sendDataToKuduTableNameTopic, Boolean.TRUE.toString()));
+        this.props = props;
+        sendDataToKuduTableNameTopic = Boolean.parseBoolean(props.getOrDefault(PropKeys.sendDataToKuduTableNameTopic, PropDefaultValues.sendDataToKuduTableNameTopic));
         inputMsgType = InputMsgType.valueOf(props.get(PropKeys.inputMsgType));
         maxBatchSize = Integer.parseInt(props.getOrDefault(PropKeys.maxBatchSize, PropDefaultValues.maxBatchSize));
+
+        emailService = new EmailService(
+                props.getOrDefault(PropKeys.emailHostName, PropDefaultValues.emailHostName),
+                props.getOrDefault(PropKeys.emailFrom, PropDefaultValues.emailFrom),
+                props.getOrDefault(PropKeys.emailUser, PropDefaultValues.emailUser),
+                props.getOrDefault(PropKeys.emailPassword, PropDefaultValues.emailPassword),
+                StringUtils.splitByWholeSeparator(props.getOrDefault(PropKeys.emailTo, PropDefaultValues.emailTo), ",")
+        );
 
         kafkaProducer = new KafkaProducer(props);
 
@@ -97,9 +109,8 @@ public class KuduSinkTask extends SinkTask {
                     operations.clear();
                 }
             } catch (Exception e) {
-                //TODO 邮件告警
-                //TODO 邮件告警
-                //TODO 邮件告警
+                emailService.send("props:" + props + "\n,error:" + e.getMessage());
+
                 logger.error("put error", e);
                 if (reporter != null) {
                     // Send errant record to error reporter

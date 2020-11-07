@@ -10,6 +10,13 @@ public interface PropKeys {
     String sendDataToKuduTableNameTopic = "sendDataToKuduTableNameTopic";
     String inputMsgType = "inputMsgType";
 
+    String emailHostName = "emailHostName";
+    String emailFrom = "emailFrom";
+    String emailUser = "emailUser";
+    String emailPassword = "emailPassword";
+    String emailTo = "emailTo";
+
+
     String keyConverter = "key.converter";
     String valueConverter = "value.converter";
 }
