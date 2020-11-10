@@ -7,11 +7,13 @@ import personal.leo.kafka_connect_kudu.KuduSyncer;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 public class CommonTest {
@@ -46,17 +48,24 @@ public class CommonTest {
 
     @Test
     public void test2() throws ParseException {
-        final String dateStr = "2020-11-10 01:04:04";
-
+        final String dateStr = "2020-11-10T12:17:03Z";
         final Date date = DateUtils.parseDate(dateStr, KuduSyncer.datePatterns);
-        final ZonedDateTime zonedDateTime = date.toInstant().atZone(ZoneId.of("UTC+1"));
-        System.out.println(date.toInstant().atZone(ZoneId.of("UTC+1")));
-        System.out.println(date.toInstant().atZone(ZoneId.of("UTC+2")));
-        System.out.println(date.toInstant().atZone(ZoneId.of("UTC+3")));
-        System.out.println(date.toInstant().atZone(ZoneId.of("UTC+8")));
-        final Timestamp from = Timestamp.from(zonedDateTime.toInstant());
+        final Instant instant = date.toInstant().atZone(ZoneId.of("GMT+3")).toInstant();
+        System.out.println(Timestamp.from(instant));
+    }
 
-        System.out.println(from);
+    @Test
+    public void test22() throws ParseException {
+        SimpleDateFormat sdf8 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf8.setTimeZone(TimeZone.getTimeZone("GMT+16"));
+        final StopWatch watch = StopWatch.createStarted();
+        final String dateStr = "2020-11-10T12:17:03Z";
+        final Date date = DateUtils.parseDate(dateStr, KuduSyncer.datePatterns);
+        final String dateStr2 = sdf8.format(date);
+        final Date date2 = DateUtils.parseDate(dateStr2, KuduSyncer.datePatterns);
+        System.out.println(date2);
+        watch.stop();
+        System.out.println(watch);
     }
 
     @Test

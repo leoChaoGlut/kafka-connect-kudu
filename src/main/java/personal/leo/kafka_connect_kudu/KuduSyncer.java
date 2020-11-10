@@ -14,23 +14,23 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.time.Instant;
-import java.time.ZoneId;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class KuduSyncer {
     private Logger logger = LoggerFactory.getLogger(getClass());
+    public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
     public static final String[] datePatterns = {
             DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.getPattern(),
             DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.getPattern(),
             DateFormatUtils.ISO_8601_EXTENDED_DATE_FORMAT.getPattern(),
-            "yyyy-MM-dd HH:mm:ss",
+            DEFAULT_DATE_PATTERN,
     };
-
     private final KuduClient kuduClient;
     private final KuduSession session;
     private final KuduTable kuduTable;
@@ -45,7 +45,7 @@ public class KuduSyncer {
     private final boolean onlySyncValueChangedColumns;
     private final boolean logEnabled;
     private final Map<String, ColumnSchema> kuduColumnNameMapKuduColumn;
-    private final ZoneId zoneId;
+    private final SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_PATTERN);
 
 
     public KuduSyncer(Map<String, String> props) throws KuduException {
@@ -54,7 +54,9 @@ public class KuduSyncer {
         maxBatchSize = Integer.parseInt(props.getOrDefault(PropKeys.maxBatchSize, PropDefaultValues.maxBatchSize)) + 10;//随便加几个size,防止kudu 报 超出maxBatchSize的错误
         onlySyncValueChangedColumns = Boolean.parseBoolean(props.getOrDefault(PropKeys.onlySyncValueChangedColumns, PropDefaultValues.onlySyncValueChangedColumns));
         logEnabled = Boolean.parseBoolean(props.getOrDefault(PropKeys.logEnabled, PropDefaultValues.logEnabled));
-        zoneId = ZoneId.of(props.getOrDefault(PropKeys.zoneId, PropDefaultValues.zoneId));
+
+        final String zoneId = props.getOrDefault(PropKeys.zoneId, PropDefaultValues.zoneId);
+        sdf.setTimeZone(TimeZone.getTimeZone(zoneId));
 
         kuduClient = new KuduClient.KuduClientBuilder(masterAddresses).build();
 
@@ -179,9 +181,14 @@ public class KuduSyncer {
                     timestamp = new Timestamp(Long.parseLong(value));
                 } catch (NumberFormatException e) {
                     try {
+//                        logger.info("00000000000000: " + value);
                         final Date date = DateUtils.parseDate(value, datePatterns);
-                        final Instant instant = date.toInstant().atZone(zoneId).toInstant();
-                        timestamp = Timestamp.from(instant);
+                        final String convertedDateStr = sdf.format(date);
+//                        logger.info("11111111111111111: " + convertedDateStr);
+                        final Date convertedDate = DateUtils.parseDate(convertedDateStr, datePatterns);
+//                        logger.info("22222222222222222: " + convertedDate);
+                        timestamp = new Timestamp(convertedDate.getTime());
+//                        logger.info("33333333333333333: " + timestamp);
                     } catch (ParseException ex) {
                         throw new RuntimeException("parse date error:" + value);
                     }
@@ -248,7 +255,6 @@ public class KuduSyncer {
                 ", onlySyncValueChangedColumns=" + onlySyncValueChangedColumns +
                 ", logEnabled=" + logEnabled +
                 ", kuduColumnNameMapKuduColumn=" + kuduColumnNameMapKuduColumn +
-                ", zoneId=" + zoneId +
                 '}';
     }
 }
