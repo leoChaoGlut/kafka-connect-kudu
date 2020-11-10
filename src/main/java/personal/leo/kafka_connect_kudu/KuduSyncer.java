@@ -181,14 +181,10 @@ public class KuduSyncer {
                     timestamp = new Timestamp(Long.parseLong(value));
                 } catch (NumberFormatException e) {
                     try {
-//                        logger.info("00000000000000: " + value);
                         final Date date = DateUtils.parseDate(value, datePatterns);
                         final String convertedDateStr = sdf.format(date);
-//                        logger.info("11111111111111111: " + convertedDateStr);
                         final Date convertedDate = DateUtils.parseDate(convertedDateStr, datePatterns);
-//                        logger.info("22222222222222222: " + convertedDate);
                         timestamp = new Timestamp(convertedDate.getTime());
-//                        logger.info("33333333333333333: " + timestamp);
                     } catch (ParseException ex) {
                         throw new RuntimeException("parse date error:" + value);
                     }
