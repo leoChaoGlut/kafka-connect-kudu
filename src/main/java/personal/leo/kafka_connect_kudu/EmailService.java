@@ -6,6 +6,8 @@ import org.apache.commons.mail.SimpleEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+
 public class EmailService {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -24,6 +26,7 @@ public class EmailService {
     }
 
     public void send(String msg) {
+        logger.info("send email: " + toString());
         try {
             Email email = new SimpleEmail();
             email.setHostName(hostName);
@@ -37,6 +40,16 @@ public class EmailService {
         } catch (Exception e) {
             logger.error("send email failed", e);
         }
+    }
 
+    @Override
+    public String toString() {
+        return "EmailService{" +
+                "hostName='" + hostName + '\'' +
+                ", from='" + from + '\'' +
+                ", user='" + user + '\'' +
+                ", password='" + password + '\'' +
+                ", to=" + Arrays.toString(to) +
+                '}';
     }
 }

@@ -65,6 +65,7 @@ public class KuduSinkTask extends SinkTask {
     @Override
     public void put(Collection<SinkRecord> records) {
         final List<Operation> operations = new ArrayList<>(maxBatchSize);
+        final List<String> msgs = new ArrayList<>();
         for (SinkRecord record : records) {
             try {
                 if (record.value() == null) {
@@ -93,11 +94,13 @@ public class KuduSinkTask extends SinkTask {
                         }
 
                         operation = kuduSyncer.createOperationByPayload(payload);
+                        msgs.add(payload.toJSONString());
                         break;
                     case kafkaMsg:
                         final String json = (String) record.value();
                         final Map dataSet = JSON.parseObject(json, Map.class);
                         operation = kuduSyncer.createOperationByDataSet(dataSet);
+                        msgs.add(json);
                         break;
                     default:
                         throw new RuntimeException("not supported: " + inputMsgType);
@@ -109,11 +112,12 @@ public class KuduSinkTask extends SinkTask {
                 if (operations.size() >= maxBatchSize) {
                     kuduSyncer.sync(operations);
                     operations.clear();
+                    msgs.clear();
                 }
             } catch (Exception e) {
+                logger.error("put error, msgs:" + msgs, e);
                 emailService.send("props:" + props + "\n,error:" + e.getMessage());
 
-                logger.error("put error", e);
                 if (reporter != null) {
                     // Send errant record to error reporter
                     reporter.report(record, e);
@@ -131,8 +135,10 @@ public class KuduSinkTask extends SinkTask {
         try {
             kuduSyncer.sync(operations);
             operations.clear();
+            msgs.clear();
         } catch (KuduException e) {
             logger.error("final sync error", e);
+            emailService.send("props:" + props + "\n,error:" + e.getMessage());
             throw new RuntimeException(e);
         }
     }
