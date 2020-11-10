@@ -47,6 +47,7 @@ public class CommonTest {
     @Test
     public void test2() throws ParseException {
         final String dateStr = "2020-11-10 01:04:04";
+
         final Date date = DateUtils.parseDate(dateStr, KuduSyncer.datePatterns);
         final ZonedDateTime zonedDateTime = date.toInstant().atZone(ZoneId.of("UTC+1"));
         System.out.println(date.toInstant().atZone(ZoneId.of("UTC+1")));
@@ -54,6 +55,7 @@ public class CommonTest {
         System.out.println(date.toInstant().atZone(ZoneId.of("UTC+3")));
         System.out.println(date.toInstant().atZone(ZoneId.of("UTC+8")));
         final Timestamp from = Timestamp.from(zonedDateTime.toInstant());
+
         System.out.println(from);
     }
 

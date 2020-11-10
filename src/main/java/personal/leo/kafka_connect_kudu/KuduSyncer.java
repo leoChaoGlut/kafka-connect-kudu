@@ -65,7 +65,7 @@ public class KuduSyncer {
         session.setMutationBufferSpace(maxBatchSize);
 
         kuduColumnNameMapKuduColumn = kuduTable.getSchema().getColumns().stream().collect(Collectors.toMap(columnSchema -> columnSchema.getName().toLowerCase(), Function.identity()));
-        logger.info("kuduColumnNameMapKuduColumn: " + kuduColumnNameMapKuduColumn);
+        logger.info("KuduSyncer : " + toString());
     }
 
 
@@ -239,4 +239,16 @@ public class KuduSyncer {
         kuduClient.close();
     }
 
+    @Override
+    public String toString() {
+        return "KuduSyncer{" +
+                "masterAddresses='" + masterAddresses + '\'' +
+                ", kuduTableName='" + kuduTableName + '\'' +
+                ", maxBatchSize=" + maxBatchSize +
+                ", onlySyncValueChangedColumns=" + onlySyncValueChangedColumns +
+                ", logEnabled=" + logEnabled +
+                ", kuduColumnNameMapKuduColumn=" + kuduColumnNameMapKuduColumn +
+                ", zoneId=" + zoneId +
+                '}';
+    }
 }

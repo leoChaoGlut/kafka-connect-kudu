@@ -64,83 +64,74 @@ public class KuduSinkTask extends SinkTask {
 
     @Override
     public void put(Collection<SinkRecord> records) {
-        final List<Operation> operations = new ArrayList<>(maxBatchSize);
         final List<String> msgs = new ArrayList<>();
+        try {
+            sync(records, msgs);
+        } catch (Exception e) {
+            logger.error("put error, msgs:" + msgs, e);
+            emailService.send("props:" + props + "\n,error:" + e.getMessage());
+            throw new RuntimeException("Failed on record", e);
+        }
+    }
+
+    private void sync(Collection<SinkRecord> records, List<String> msgs) throws KuduException {
+        final List<Operation> operations = new ArrayList<>(maxBatchSize);
         for (SinkRecord record : records) {
-            try {
-                if (record.value() == null) {
-                    continue;
-                }
-
-                final Operation operation;
-                switch (inputMsgType) {
-                    case binlog:
-                        final JSONObject value = (JSONObject) record.value();
-                        if (value == null) {
-                            continue;
-                        }
-
-                        final JSONObject payload = includeSchemaChanges ? value.getJSONObject(PayloadKeys.payload) : value;
-                        if (payload == null) {
-                            continue;
-                        }
-
-                        if (sendDataToKuduTableNameTopic) {
-                            //只取insert,update的after部分,delete的不取
-                            final JSONObject after = payload.getJSONObject(PayloadKeys.after);
-                            if (after != null) {
-                                kafkaProducer.send(after.toJSONString());
-                            }
-                        }
-
-                        operation = kuduSyncer.createOperationByPayload(payload);
-                        msgs.add(payload.toJSONString());
-                        break;
-                    case kafkaMsg:
-                        final String json = (String) record.value();
-                        final Map dataSet = JSON.parseObject(json, Map.class);
-                        operation = kuduSyncer.createOperationByDataSet(dataSet);
-                        msgs.add(json);
-                        break;
-                    default:
-                        throw new RuntimeException("not supported: " + inputMsgType);
-                }
-
-
-                operations.add(operation);
-
-                if (operations.size() >= maxBatchSize) {
-                    kuduSyncer.sync(operations);
-                    operations.clear();
-                    msgs.clear();
-                }
-            } catch (Exception e) {
-                logger.error("put error, msgs:" + msgs, e);
-                emailService.send("props:" + props + "\n,error:" + e.getMessage());
-
-                if (reporter != null) {
-                    // Send errant record to error reporter
-                    reporter.report(record, e);
-                } else {
-                    // There's no error reporter, so fail
-                    throw new RuntimeException("Failed on record", e);
-                }
+            if (record.value() == null) {
+                continue;
             }
+            final Operation operation;
+            switch (inputMsgType) {
+                case binlog:
+                    final JSONObject value = (JSONObject) record.value();
+                    if (value == null) {
+                        continue;
+                    }
+
+                    final JSONObject payload = includeSchemaChanges ? value.getJSONObject(PayloadKeys.payload) : value;
+                    if (payload == null) {
+                        continue;
+                    }
+
+                    if (sendDataToKuduTableNameTopic) {
+                        //只取insert,update的after部分,delete的不取
+                        final JSONObject after = payload.getJSONObject(PayloadKeys.after);
+                        if (after != null) {
+                            kafkaProducer.send(after.toJSONString());
+                        }
+                    }
+
+                    operation = kuduSyncer.createOperationByPayload(payload);
+                    msgs.add(payload.toJSONString());
+                    break;
+                case kafkaMsg:
+                    final String json = (String) record.value();
+                    final Map dataSet = JSON.parseObject(json, Map.class);
+                    operation = kuduSyncer.createOperationByDataSet(dataSet);
+                    msgs.add(json);
+                    break;
+                default:
+                    throw new RuntimeException("not supported: " + inputMsgType);
+            }
+
+
+            operations.add(operation);
+
+            if (operations.size() >= maxBatchSize) {
+                kuduSyncer.sync(operations);
+                operations.clear();
+                msgs.clear();
+            }
+
         }
 
         if (operations.isEmpty()) {
             return;
         }
 
-        try {
-            kuduSyncer.sync(operations);
-            operations.clear();
-            msgs.clear();
-        } catch (KuduException e) {
-            logger.error("final sync error", e);
-            emailService.send("props:" + props + "\n,error:" + e.getMessage());
-            throw new RuntimeException(e);
-        }
+        kuduSyncer.sync(operations);
+        operations.clear();
+        msgs.clear();
     }
 
     @Override
