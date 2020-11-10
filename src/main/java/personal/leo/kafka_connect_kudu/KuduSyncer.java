@@ -14,6 +14,8 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,7 @@ public class KuduSyncer {
     private final boolean onlySyncValueChangedColumns;
     private final boolean logEnabled;
     private final Map<String, ColumnSchema> kuduColumnNameMapKuduColumn;
+    private final ZoneId zoneId;
 
 
     public KuduSyncer(Map<String, String> props) throws KuduException {
@@ -51,7 +54,7 @@ public class KuduSyncer {
         maxBatchSize = Integer.parseInt(props.getOrDefault(PropKeys.maxBatchSize, PropDefaultValues.maxBatchSize)) + 10;//随便加几个size,防止kudu 报 超出maxBatchSize的错误
         onlySyncValueChangedColumns = Boolean.parseBoolean(props.getOrDefault(PropKeys.onlySyncValueChangedColumns, PropDefaultValues.onlySyncValueChangedColumns));
         logEnabled = Boolean.parseBoolean(props.getOrDefault(PropKeys.logEnabled, PropDefaultValues.logEnabled));
-
+        zoneId = ZoneId.of(props.getOrDefault(PropKeys.zoneId, PropDefaultValues.zoneId));
 
         kuduClient = new KuduClient.KuduClientBuilder(masterAddresses).build();
 
@@ -171,19 +174,20 @@ public class KuduSyncer {
                 break;
             case UNIXTIME_MICROS:
 //                TODO date类型转换会出现1970-01-01
-                long timestamp;
+                Timestamp timestamp;
                 try {
-                    timestamp = Long.parseLong(value);
+                    timestamp = new Timestamp(Long.parseLong(value));
                 } catch (NumberFormatException e) {
                     try {
                         final Date date = DateUtils.parseDate(value, datePatterns);
-                        timestamp = date.getTime();
+                        final Instant instant = date.toInstant().atZone(zoneId).toInstant();
+                        timestamp = Timestamp.from(instant);
                     } catch (ParseException ex) {
                         throw new RuntimeException("parse date error:" + value);
                     }
                 }
 
-                row.addTimestamp(kuduColumnName, new Timestamp(timestamp));
+                row.addTimestamp(kuduColumnName, timestamp);
                 break;
             case FLOAT:
                 row.addFloat(kuduColumnName, Float.parseFloat(value));

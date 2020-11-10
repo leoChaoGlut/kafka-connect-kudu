@@ -20,4 +20,6 @@ public interface PropKeys {
     String includeSchemaChanges = "includeSchemaChanges";
     String keyConverter = "key.converter";
     String valueConverter = "value.converter";
+
+    String zoneId = "zoneId";
 }

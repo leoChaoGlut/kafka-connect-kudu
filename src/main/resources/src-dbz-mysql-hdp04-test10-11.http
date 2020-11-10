@@ -3,27 +3,30 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "src-dbz-mysql-hdp04-test10-3",
+  "name": "src-dbz-mysql-hdp04-test10-15",
   "config": {
     "connector.class": "io.debezium.connector.mysql.MySqlConnector",
     "database.hostname": "hdp04",
     "database.port": "3306",
     "database.user": "root",
     "database.password": "1",
-    "database.server.id": "102",
-    "database.server.name": "hdp04",
+    "database.server.id": "15",
+    "database.server.name": "test15",
     "database.include.list": "test",
-    "table.include.list": "test.\\t10",
+    "table.include.list": "test\\.t10",
     "decimal.handling.mode": "string",
     "database.history.kafka.bootstrap.servers": "test01:10001,test02:10001,test03:10001",
-    "database.history.kafka.topic": "history.src-dbz-mysql-hdp04-test10-3"
+    "database.history.kafka.topic": "history.src-dbz-mysql-hdp04-test10-15",
+    "include.schema.changes": "false",
+    "database.serverTimezone": "GMT+8",
+    "snapshot.mode": "schema_only"
   }
 }
 
 ###
 
 # curl -i -X DELETE -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/kudu-connector
-DELETE test01:10500/connectors/sink-kudu-s1-t9
+DELETE test01:10500/connectors/src-dbz-mysql-hdp04-test10-15
 Accept: application/json
 Content-Type: application/json
 

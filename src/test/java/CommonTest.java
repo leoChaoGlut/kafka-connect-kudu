@@ -5,7 +5,11 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 import personal.leo.kafka_connect_kudu.KuduSyncer;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -13,7 +17,7 @@ import java.util.regex.Pattern;
 public class CommonTest {
     @Test
     public void test() {
-        String regex = "^ypsx_pay[0-9]+\\.refund[0-9]+$";
+        String regex = "^(newretail)\\.(nr_pos_payment_slip|nr_pos_payment_slip_item)$";
         Pattern pattern = Pattern.compile(regex);
         int a = 1112223334;
     }
@@ -42,13 +46,15 @@ public class CommonTest {
 
     @Test
     public void test2() throws ParseException {
-        final String dateStr = "2020-07-10T18:18:52Z";
-        System.out.println(DateUtils.parseDate(dateStr, KuduSyncer.datePatterns));
-        System.out.println(DateUtils.parseDate(dateStr, Locale.CHINA, KuduSyncer.datePatterns));
-        System.out.println(DateUtils.parseDate(dateStr, Locale.ENGLISH, KuduSyncer.datePatterns));
-        System.out.println(DateUtils.parseDate(dateStr, Locale.CHINESE, KuduSyncer.datePatterns));
-        System.out.println(DateUtils.parseDate(dateStr, Locale.ROOT, KuduSyncer.datePatterns));
-        System.out.println(DateUtils.parseDate(dateStr, Locale.UK, KuduSyncer.datePatterns));
+        final String dateStr = "2020-11-10 01:04:04";
+        final Date date = DateUtils.parseDate(dateStr, KuduSyncer.datePatterns);
+        final ZonedDateTime zonedDateTime = date.toInstant().atZone(ZoneId.of("UTC+1"));
+        System.out.println(date.toInstant().atZone(ZoneId.of("UTC+1")));
+        System.out.println(date.toInstant().atZone(ZoneId.of("UTC+2")));
+        System.out.println(date.toInstant().atZone(ZoneId.of("UTC+3")));
+        System.out.println(date.toInstant().atZone(ZoneId.of("UTC+8")));
+        final Timestamp from = Timestamp.from(zonedDateTime.toInstant());
+        System.out.println(from);
     }
 
     @Test

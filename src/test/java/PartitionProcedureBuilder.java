@@ -26,14 +26,14 @@ public class PartitionProcedureBuilder {
     public void test() throws ParseException {
 //        CALL kudu.system.add_range_partition('schema', 'table', '{"lower": "2018-01-01", "upper": "2018-06-01"}')
         final TimeUnit timeUnit = TimeUnit.DAY;
-        final Date lowerDate = DateUtils.parseDate("2020-07-06", TimeUnit.patterns());
-        final int amount = 1;
-        if (amount < 0) {
-            throw new RuntimeException("amount less than 0:" + amount);
+        final Date lowerDate = DateUtils.parseDate("2019-07-18", TimeUnit.patterns());
+        final int step = 30;
+        if (step < 0) {
+            throw new RuntimeException("step less than 0:" + step);
         }
         final int partitionCount = Integer.MAX_VALUE;
-        final String schema = "ods_inventory";
-        final String table = "inv_inventory";
+        final String schema = "ods_goods";
+        final String table = "shop_item_sku";
         Date prevDate = lowerDate, nextDate, upperDate, now = new Date();
 
         switch (timeUnit) {
@@ -55,13 +55,13 @@ public class PartitionProcedureBuilder {
         for (int i = 0; i < partitionCount; i++) {
             switch (timeUnit) {
                 case DAY:
-                    nextDate = DateUtils.addDays(prevDate, amount);
+                    nextDate = DateUtils.addDays(prevDate, step);
                     break;
                 case MONTH:
-                    nextDate = DateUtils.addMonths(prevDate, amount);
+                    nextDate = DateUtils.addMonths(prevDate, step);
                     break;
                 case YEAR:
-                    nextDate = DateUtils.addYears(prevDate, amount);
+                    nextDate = DateUtils.addYears(prevDate, step);
                     break;
                 default:
                     throw new RuntimeException("not supported:" + timeUnit);

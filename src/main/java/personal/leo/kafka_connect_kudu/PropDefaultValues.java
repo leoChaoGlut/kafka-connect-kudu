@@ -14,4 +14,5 @@ public interface PropDefaultValues {
     String emailTo = "liaochao@ypshengxian.com";
 
     String includeSchemaChanges = "false";
+    String zoneId = "UTC+8";
 }

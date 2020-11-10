@@ -8,14 +8,15 @@ WITH (
     partition_by_hash_buckets = 2
 );
 
-CREATE TABLE kudu.s1.t1
+CREATE TABLE kudu.s1.t103
 (
-    c1  int WITH (primary_key = true),
-    sc2 decimal(10, 5) with(nullable= true)
+    id int WITH (primary_key = true),
+    t1 timestamp,
+    t2 timestamp
 )
 WITH (
-    partition_by_hash_columns = ARRAY['c1'],
-    partition_by_hash_buckets = 2
+    partition_by_hash_columns = ARRAY['id'],
+    partition_by_hash_buckets = 10
 );
 
 
