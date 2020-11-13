@@ -27,6 +27,8 @@ public class KuduSinkTask extends SinkTask {
     private EmailService emailService;
     private Map<String, String> props;
     private boolean includeSchemaChanges;
+    private final List<String> msgs = new ArrayList<>();
+    private final List<Operation> operations = new ArrayList<>(maxBatchSize);
 
     @Override
     public void start(Map<String, String> props) {
@@ -64,18 +66,18 @@ public class KuduSinkTask extends SinkTask {
 
     @Override
     public void put(Collection<SinkRecord> records) {
-        final List<String> msgs = new ArrayList<>();
         try {
             sync(records, msgs);
         } catch (Exception e) {
-            logger.error("put error, msgs:" + msgs, e);
-            emailService.send("props:" + props + "\n,error:" + e.getMessage());
+            final String msgJson = JSON.toJSONString(msgs);
+            logger.error("put error, msgs:" + msgJson, e);
+            emailService.send("props:" + props + "\n,error:" + e.getMessage() + "\n" + msgJson);
             throw new RuntimeException("Failed on record", e);
         }
     }
 
     private void sync(Collection<SinkRecord> records, List<String> msgs) throws KuduException {
-        final List<Operation> operations = new ArrayList<>(maxBatchSize);
+
         for (SinkRecord record : records) {
             if (record.value() == null) {
                 continue;
@@ -118,8 +120,7 @@ public class KuduSinkTask extends SinkTask {
             operations.add(operation);
 
             if (operations.size() >= maxBatchSize) {
-                kuduSyncer.sync(operations);
-                operations.clear();
+                kuduSyncer.syncAndClear(operations);
                 msgs.clear();
             }
 
@@ -129,8 +130,7 @@ public class KuduSinkTask extends SinkTask {
             return;
         }
 
-        kuduSyncer.sync(operations);
-        operations.clear();
+        kuduSyncer.syncAndClear(operations);
         msgs.clear();
     }
 

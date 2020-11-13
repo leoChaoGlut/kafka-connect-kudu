@@ -214,7 +214,7 @@ public class KuduSyncer {
     }
 
 
-    public void sync(List<Operation> operations) throws KuduException {
+    public void syncAndClear(List<Operation> operations) throws KuduException {
         final StopWatch watch = StopWatch.createStarted();
         if (operations.isEmpty()) {
             return;
@@ -235,6 +235,7 @@ public class KuduSyncer {
         if (logEnabled) {
             logger.info("sync: " + operations.size() + ",to " + kuduTableName + ",spend: " + watch);
         }
+        operations.clear();
     }
 
     public void stop() throws KuduException {

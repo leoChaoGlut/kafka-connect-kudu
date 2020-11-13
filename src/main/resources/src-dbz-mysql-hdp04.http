@@ -3,27 +3,30 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "name": "src-dbz-mysql-hdp04",
+  "name": "test-src-dbz-hdp04-root-1",
   "config": {
-    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "database.history.kafka.topic": "history.test-src-dbz-hdp04-root-1",
+    "database.server.id": "1",
     "database.hostname": "hdp04",
-    "database.port": "3306",
+    "database.server.name": "test-src-dbz-hdp04-root-1",
     "database.user": "root",
     "database.password": "1",
-    "database.server.id": "1",
-    "database.server.name": "hdp04",
-    "database.include.list": "^test[0-9]*$",
-    "table.include.list": "^test[0-9]*\\.t7_[0-9]+$,^test[0-9]*\\.t8_[0-9]+$,^test[0-9]*\\.t9_[0-9]+$,^test[0-9]*\\.t10_[0-9]+$",
+    "database.include.list": "test",
+    "table.include.list": "^test\\.(t10|t1)$",
+    "database.port": "3306",
+    "snapshot.mode": "initial",
+    "include.schema.changes": "false",
+    "database.serverTimezone": "GMT",
     "decimal.handling.mode": "string",
-    "database.history.kafka.bootstrap.servers": "test01:10001,test02:10001,test03:10001",
-    "database.history.kafka.topic": "history.src-dbz-mysql-hdp04"
+    "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+    "database.history.kafka.bootstrap.servers": "test01:10001,test02:10001,test03:10001"
   }
 }
 
 ###
 
 # curl -i -X DELETE -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/kudu-connector
-DELETE test01:10500/connectors/src-dbz-mysql-hdp04
+DELETE test01:10500/connectors/test-src-dbz-hdp04-root-1
 Accept: application/json
 Content-Type: application/json
 

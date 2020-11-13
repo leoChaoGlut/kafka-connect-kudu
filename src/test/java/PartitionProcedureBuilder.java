@@ -26,14 +26,14 @@ public class PartitionProcedureBuilder {
     public void test() throws ParseException {
 //        CALL kudu.system.add_range_partition('schema', 'table', '{"lower": "2018-01-01", "upper": "2018-06-01"}')
         final TimeUnit timeUnit = TimeUnit.DAY;
-        final Date lowerDate = DateUtils.parseDate("2019-07-18", TimeUnit.patterns());
+        final Date lowerDate = DateUtils.parseDate("2020-09-01", TimeUnit.patterns());
         final int step = 30;
         if (step < 0) {
             throw new RuntimeException("step less than 0:" + step);
         }
         final int partitionCount = Integer.MAX_VALUE;
-        final String schema = "ods_goods";
-        final String table = "shop_item_sku";
+        final String schema = "ods_wms";
+        final String table = "out_package_detail";
         Date prevDate = lowerDate, nextDate, upperDate, now = new Date();
 
         switch (timeUnit) {
