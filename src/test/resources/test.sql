@@ -1,3 +1,7 @@
+https://repository.sonatype.org/service/local/repositories/central-proxy/content/com/alibaba/fastjson/1.2.74/fastjson-1.2.74.jar
+https://repository.sonatype.org/service/local/repositories/central-proxy/content/org/apache/commons/commons-lang3/3.10/commons-lang3-3.10.jar
+https://repository.sonatype.org/service/local/repositories/central-proxy/content/org/apache/commons/commons-email/1.5/commons-email-1.5.jar
+https://repository.sonatype.org/service/local/repositories/central-proxy/content/commons-io/commons-io/2.8.0/commons-io-2.8.0.jar
 CREATE TABLE kudu.s1.t10
 (
     c1 int WITH (primary_key = true),
