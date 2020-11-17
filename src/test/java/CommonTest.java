@@ -1,22 +1,17 @@
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.Test;
-import personal.leo.kafka_connect_kudu.kudu.KuduSyncer;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.regex.Pattern;
@@ -54,9 +49,9 @@ public class CommonTest {
     @Test
     public void test2() throws ParseException {
         final String dateStr = "2020-11-10T12:17:03Z";
-        final Date date = DateUtils.parseDate(dateStr, KuduSyncer.datePatterns);
-        final Instant instant = date.toInstant().atZone(ZoneId.of("GMT+3")).toInstant();
-        System.out.println(Timestamp.from(instant));
+//        final Date date = DateUtils.parseDate(dateStr, KuduSyncer.datePatterns);
+//        final Instant instant = date.toInstant().atZone(ZoneId.of("GMT+3")).toInstant();
+//        System.out.println(Timestamp.from(instant));
     }
 
     @Test
@@ -65,12 +60,12 @@ public class CommonTest {
         sdf8.setTimeZone(TimeZone.getTimeZone("GMT+16"));
         final StopWatch watch = StopWatch.createStarted();
         final String dateStr = "2020-11-10T12:17:03Z";
-        final Date date = DateUtils.parseDate(dateStr, KuduSyncer.datePatterns);
-        final String dateStr2 = sdf8.format(date);
-        final Date date2 = DateUtils.parseDate(dateStr2, KuduSyncer.datePatterns);
-        System.out.println(date2);
-        watch.stop();
-        System.out.println(watch);
+//        final Date date = DateUtils.parseDate(dateStr, KuduSyncer.datePatterns);
+//        final String dateStr2 = sdf8.format(date);
+//        final Date date2 = DateUtils.parseDate(dateStr2, KuduSyncer.datePatterns);
+//        System.out.println(date2);
+//        watch.stop();
+//        System.out.println(watch);
     }
 
     @Test

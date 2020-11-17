@@ -1,5 +1,6 @@
 package personal.leo.kafka_connect_kudu.kudu;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.config.Config;
 import org.apache.kafka.common.config.ConfigDef;
@@ -8,8 +9,6 @@ import org.apache.kafka.connect.sink.SinkConnector;
 import org.apache.kafka.connect.storage.StringConverter;
 import org.apache.kudu.client.KuduClient;
 import org.apache.kudu.client.KuduException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import personal.leo.kafka_connect_kudu.constants.InputMsgType;
 import personal.leo.kafka_connect_kudu.constants.PropKeys;
 import personal.leo.kafka_connect_kudu.converter.JSONObjectConverter;
@@ -20,8 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class KuduSinkConector extends SinkConnector {
-    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private Map<String, String> props;
 
@@ -42,7 +41,7 @@ public class KuduSinkConector extends SinkConnector {
 
     @Override
     public void stop() {
-        logger.info("stop");
+        log.info("stop");
     }
 
     @Override
@@ -63,7 +62,7 @@ public class KuduSinkConector extends SinkConnector {
      */
     @Override
     public Config validate(Map<String, String> connectorConfigs) {
-        logger.info("validate: " + connectorConfigs);
+        log.info("validate: " + connectorConfigs);
         final Config config = super.validate(connectorConfigs);
         validateKudu(connectorConfigs);
         validateKafka(connectorConfigs);
@@ -121,14 +120,14 @@ public class KuduSinkConector extends SinkConnector {
                 throw new RuntimeException("Kudu table not exists: " + kuduTableName);
             }
         } catch (Exception e) {
-            logger.error("validate error", e);
+            log.error("validate error", e);
             throw new RuntimeException(e);
         } finally {
             if (kuduClient != null) {
                 try {
                     kuduClient.close();
                 } catch (KuduException e) {
-                    logger.error("validate error,in final block", e);
+                    log.error("validate error,in final block", e);
                     throw new RuntimeException(e);
                 }
             }

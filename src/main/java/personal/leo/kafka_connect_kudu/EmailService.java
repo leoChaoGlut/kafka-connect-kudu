@@ -1,15 +1,14 @@
 package personal.leo.kafka_connect_kudu;
 
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.SimpleEmail;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-
+@Slf4j
+@ToString
 public class EmailService {
-    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private final String hostName;
     private final String from;
@@ -26,7 +25,7 @@ public class EmailService {
     }
 
     public void send(String msg) {
-        logger.info("send email: " + toString());
+        log.info("send email: " + toString());
         try {
             Email email = new SimpleEmail();
             email.setHostName(hostName);
@@ -38,18 +37,7 @@ public class EmailService {
             email.addTo(to);
             email.send();
         } catch (Exception e) {
-            logger.error("send email failed", e);
+            log.error("send email failed", e);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "EmailService{" +
-                "hostName='" + hostName + '\'' +
-                ", from='" + from + '\'' +
-                ", user='" + user + '\'' +
-                ", password='" + password + '\'' +
-                ", to=" + Arrays.toString(to) +
-                '}';
     }
 }

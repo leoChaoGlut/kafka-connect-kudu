@@ -2,24 +2,23 @@ package personal.leo.kafka_connect_kudu.converter;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaAndValue;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.errors.DataException;
 import org.apache.kafka.connect.storage.Converter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+@Slf4j
 public class JSONObjectConverter implements Converter {
-    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void configure(Map<String, ?> configs, boolean isKey) {
-        logger.info("isKey:" + isKey + ", configure: " + configs);
+        log.info("isKey:" + isKey + ", configure: " + configs);
     }
 
     @Override

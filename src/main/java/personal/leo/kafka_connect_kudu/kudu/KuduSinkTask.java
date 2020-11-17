@@ -2,14 +2,13 @@ package personal.leo.kafka_connect_kudu.kudu;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.connect.sink.ErrantRecordReporter;
 import org.apache.kafka.connect.sink.SinkRecord;
 import org.apache.kafka.connect.sink.SinkTask;
 import org.apache.kudu.client.KuduException;
 import org.apache.kudu.client.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import personal.leo.kafka_connect_kudu.EmailService;
 import personal.leo.kafka_connect_kudu.constants.InputMsgType;
 import personal.leo.kafka_connect_kudu.constants.PayloadKeys;
@@ -23,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 public class KuduSinkTask extends SinkTask {
-    private Logger logger = LoggerFactory.getLogger(getClass());
     private KuduSyncer kuduSyncer;
     private ErrantRecordReporter reporter;
     private int maxBatchSize;
@@ -42,7 +41,7 @@ public class KuduSinkTask extends SinkTask {
         try {
             reporter = context.errantRecordReporter(); // may be null if DLQ not enabled
         } catch (NoClassDefFoundError e) {
-            logger.error("errantRecordReporter error", e);
+            log.error("errantRecordReporter error", e);
             // Will occur in Connect runtimes earlier than 2.6
             reporter = null;
         }
@@ -66,7 +65,7 @@ public class KuduSinkTask extends SinkTask {
         try {
             kuduSyncer = new KuduSyncer(props);
         } catch (KuduException e) {
-            logger.error("new KuduSyncer error", e);
+            log.error("new KuduSyncer error", e);
             throw new RuntimeException(e);
         }
     }
@@ -77,7 +76,7 @@ public class KuduSinkTask extends SinkTask {
             sync(records, msgs);
         } catch (Exception e) {
             final String msgJson = JSON.toJSONString(msgs);
-            logger.error("put error, msgs:" + msgJson, e);
+            log.error("put error, msgs:" + msgJson, e);
             CompletableFuture.runAsync(() -> emailService.send("props:" + props + "\n,error:" + e.getMessage() + "\n"));
             throw new RuntimeException("Failed on record", e);
         }
@@ -149,7 +148,7 @@ public class KuduSinkTask extends SinkTask {
         try {
             kuduSyncer.stop();
         } catch (KuduException e) {
-            logger.error("stop error", e);
+            log.error("stop error", e);
             throw new RuntimeException(e);
         }
     }

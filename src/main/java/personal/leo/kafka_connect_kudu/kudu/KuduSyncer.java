@@ -2,13 +2,12 @@ package personal.leo.kafka_connect_kudu.kudu;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Type;
 import org.apache.kudu.client.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import personal.leo.kafka_connect_kudu.constants.OperationType;
 import personal.leo.kafka_connect_kudu.constants.PayloadKeys;
 import personal.leo.kafka_connect_kudu.constants.PropDefaultValues;
@@ -26,16 +25,10 @@ import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @ToString
 public class KuduSyncer {
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
-    public static final String[] datePatterns = {
-            DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.getPattern(),
-            DateFormatUtils.ISO_8601_EXTENDED_DATETIME_TIME_ZONE_FORMAT.getPattern(),
-            DateFormatUtils.ISO_8601_EXTENDED_DATE_FORMAT.getPattern(),
-            DEFAULT_DATE_PATTERN,
-    };
+
     private final KuduClient kuduClient;
     private final KuduSession session;
     private final KuduTable kuduTable;
@@ -75,7 +68,7 @@ public class KuduSyncer {
         session.setMutationBufferSpace(maxBatchSize);
 
         kuduColumnNameMapKuduColumn = kuduTable.getSchema().getColumns().stream().collect(Collectors.toMap(columnSchema -> columnSchema.getName().toLowerCase(), Function.identity()));
-        logger.info("KuduSyncer : " + toString());
+        log.info("KuduSyncer : " + toString());
     }
 
 
@@ -236,7 +229,7 @@ public class KuduSyncer {
         }
         watch.stop();
         if (logEnabled) {
-            logger.info("sync: " + operations.size() + ",to " + kuduTableName + ",spend: " + watch);
+            log.info("sync: " + operations.size() + ",to " + kuduTableName + ",spend: " + watch);
         }
         operations.clear();
     }
