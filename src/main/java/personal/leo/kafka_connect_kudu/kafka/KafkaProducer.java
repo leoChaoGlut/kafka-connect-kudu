@@ -1,7 +1,8 @@
-package personal.leo.kafka_connect_kudu;
+package personal.leo.kafka_connect_kudu.kafka;
 
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import personal.leo.kafka_connect_kudu.constants.PropKeys;
 
 import java.util.Map;
 import java.util.Properties;

@@ -8,7 +8,7 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.Test;
-import personal.leo.kafka_connect_kudu.KuduSyncer;
+import personal.leo.kafka_connect_kudu.kudu.KuduSyncer;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

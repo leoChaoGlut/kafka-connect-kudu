@@ -1,4 +1,4 @@
-package personal.leo.kafka_connect_kudu;
+package personal.leo.kafka_connect_kudu.constants;
 
 public interface PropKeys {
     String masterAddresses = "masterAddresses";

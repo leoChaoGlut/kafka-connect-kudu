@@ -1,14 +1,18 @@
-package personal.leo.kafka_connect_kudu;
+package personal.leo.kafka_connect_kudu.kudu;
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.ToString;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Type;
 import org.apache.kudu.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import personal.leo.kafka_connect_kudu.constants.OperationType;
+import personal.leo.kafka_connect_kudu.constants.PayloadKeys;
+import personal.leo.kafka_connect_kudu.constants.PropDefaultValues;
+import personal.leo.kafka_connect_kudu.constants.PropKeys;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -22,6 +26,7 @@ import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@ToString
 public class KuduSyncer {
     private Logger logger = LoggerFactory.getLogger(getClass());
     public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";
@@ -45,7 +50,8 @@ public class KuduSyncer {
     private final boolean onlySyncValueChangedColumns;
     private final boolean logEnabled;
     private final Map<String, ColumnSchema> kuduColumnNameMapKuduColumn;
-    private final SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_PATTERN);
+    private final SimpleDateFormat dateFormat;
+    private final TimeZone timeZone;
 
 
     public KuduSyncer(Map<String, String> props) throws KuduException {
@@ -55,8 +61,10 @@ public class KuduSyncer {
         onlySyncValueChangedColumns = Boolean.parseBoolean(props.getOrDefault(PropKeys.onlySyncValueChangedColumns, PropDefaultValues.onlySyncValueChangedColumns));
         logEnabled = Boolean.parseBoolean(props.getOrDefault(PropKeys.logEnabled, PropDefaultValues.logEnabled));
 
-        final String zoneId = props.getOrDefault(PropKeys.zoneId, PropDefaultValues.zoneId);
-        sdf.setTimeZone(TimeZone.getTimeZone(zoneId));
+
+        timeZone = TimeZone.getTimeZone(props.getOrDefault(PropKeys.zoneId, PropDefaultValues.zoneId));
+        dateFormat = new SimpleDateFormat(DateFormatUtils.ISO_8601_EXTENDED_DATETIME_FORMAT.getPattern());
+        dateFormat.setTimeZone(timeZone);
 
         kuduClient = new KuduClient.KuduClientBuilder(masterAddresses).build();
 
@@ -176,21 +184,16 @@ public class KuduSyncer {
                 break;
             case UNIXTIME_MICROS:
 //                TODO date类型转换会出现1970-01-01
-                Timestamp timestamp;
                 try {
-                    timestamp = new Timestamp(Long.parseLong(value));
+                    row.addTimestamp(kuduColumnName, new Timestamp(Long.parseLong(value)));
                 } catch (NumberFormatException e) {
                     try {
-                        final Date date = DateUtils.parseDate(value, datePatterns);
-                        final String convertedDateStr = sdf.format(date);
-                        final Date convertedDate = DateUtils.parseDate(convertedDateStr, datePatterns);
-                        timestamp = new Timestamp(convertedDate.getTime());
+                        final Date date = dateFormat.parse(value);
+                        row.addTimestamp(kuduColumnName, new Timestamp(date.getTime()));
                     } catch (ParseException ex) {
                         throw new RuntimeException("parse date error:" + value);
                     }
                 }
-
-                row.addTimestamp(kuduColumnName, timestamp);
                 break;
             case FLOAT:
                 row.addFloat(kuduColumnName, Float.parseFloat(value));
@@ -243,15 +246,4 @@ public class KuduSyncer {
         kuduClient.close();
     }
 
-    @Override
-    public String toString() {
-        return "KuduSyncer{" +
-                "masterAddresses='" + masterAddresses + '\'' +
-                ", kuduTableName='" + kuduTableName + '\'' +
-                ", maxBatchSize=" + maxBatchSize +
-                ", onlySyncValueChangedColumns=" + onlySyncValueChangedColumns +
-                ", logEnabled=" + logEnabled +
-                ", kuduColumnNameMapKuduColumn=" + kuduColumnNameMapKuduColumn +
-                '}';
-    }
 }

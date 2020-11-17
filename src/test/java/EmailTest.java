@@ -4,7 +4,7 @@ import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 import org.junit.Test;
-import personal.leo.kafka_connect_kudu.PropDefaultValues;
+import personal.leo.kafka_connect_kudu.constants.PropDefaultValues;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

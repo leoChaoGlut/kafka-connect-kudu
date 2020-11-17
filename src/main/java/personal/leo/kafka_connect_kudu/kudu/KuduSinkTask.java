@@ -1,4 +1,4 @@
-package personal.leo.kafka_connect_kudu;
+package personal.leo.kafka_connect_kudu.kudu;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -10,11 +10,18 @@ import org.apache.kudu.client.KuduException;
 import org.apache.kudu.client.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import personal.leo.kafka_connect_kudu.EmailService;
+import personal.leo.kafka_connect_kudu.constants.InputMsgType;
+import personal.leo.kafka_connect_kudu.constants.PayloadKeys;
+import personal.leo.kafka_connect_kudu.constants.PropDefaultValues;
+import personal.leo.kafka_connect_kudu.constants.PropKeys;
+import personal.leo.kafka_connect_kudu.kafka.KafkaProducer;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class KuduSinkTask extends SinkTask {
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -71,7 +78,7 @@ public class KuduSinkTask extends SinkTask {
         } catch (Exception e) {
             final String msgJson = JSON.toJSONString(msgs);
             logger.error("put error, msgs:" + msgJson, e);
-            emailService.send("props:" + props + "\n,error:" + e.getMessage() + "\n");
+            CompletableFuture.runAsync(() -> emailService.send("props:" + props + "\n,error:" + e.getMessage() + "\n"));
             throw new RuntimeException("Failed on record", e);
         }
     }

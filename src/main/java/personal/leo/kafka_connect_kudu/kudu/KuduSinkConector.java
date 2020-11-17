@@ -1,4 +1,4 @@
-package personal.leo.kafka_connect_kudu;
+package personal.leo.kafka_connect_kudu.kudu;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.config.Config;
@@ -10,6 +10,10 @@ import org.apache.kudu.client.KuduClient;
 import org.apache.kudu.client.KuduException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import personal.leo.kafka_connect_kudu.constants.InputMsgType;
+import personal.leo.kafka_connect_kudu.constants.PropKeys;
+import personal.leo.kafka_connect_kudu.converter.JSONObjectConverter;
+import personal.leo.kafka_connect_kudu.kafka.KafkaProducer;
 
 import java.util.Collections;
 import java.util.HashMap;
