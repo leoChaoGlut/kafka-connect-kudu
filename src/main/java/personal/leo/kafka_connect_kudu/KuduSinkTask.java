@@ -71,13 +71,12 @@ public class KuduSinkTask extends SinkTask {
         } catch (Exception e) {
             final String msgJson = JSON.toJSONString(msgs);
             logger.error("put error, msgs:" + msgJson, e);
-            emailService.send("props:" + props + "\n,error:" + e.getMessage() + "\n" + msgJson);
+            emailService.send("props:" + props + "\n,error:" + e.getMessage() + "\n");
             throw new RuntimeException("Failed on record", e);
         }
     }
 
     private void sync(Collection<SinkRecord> records, List<String> msgs) throws KuduException {
-
         for (SinkRecord record : records) {
             if (record.value() == null) {
                 continue;

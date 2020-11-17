@@ -1,19 +1,24 @@
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.Test;
 import personal.leo.kafka_connect_kudu.KuduSyncer;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
+import java.util.concurrent.Future;
 import java.util.regex.Pattern;
 
 public class CommonTest {
@@ -70,15 +75,18 @@ public class CommonTest {
 
     @Test
     public void test3() throws ParseException {
-        String l = "2020-07-10T18:18:52Z";
-        final StopWatch watch = StopWatch.createStarted();
-        try {
-            final long l1 = Long.parseLong(l);
-        } catch (NumberFormatException e) {
+        Properties props = new Properties();
+        props.put("bootstrap.servers", "localhost:9092");
+        props.put("acks", "all");
+        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
+        Producer<String, String> producer = new KafkaProducer<>(props);
+        for (int i = 0; i < 100; i++) {
+            final Future<RecordMetadata> send = producer.send(new ProducerRecord<String, String>("my-topic", Integer.toString(i), Integer.toString(i)));
         }
-        watch.stop();
-        System.out.println(watch);
+
+        producer.close();
     }
 
     @Test
@@ -86,5 +94,15 @@ public class CommonTest {
         System.out.println(Locale.CHINA.toLanguageTag());
         System.out.println(Locale.CHINA);
         System.out.println(Locale.forLanguageTag(Locale.CHINA.toLanguageTag()));
+    }
+
+    @Test
+    public void test5() throws ParseException, IOException {
+        final String json = IOUtils.toString(CommonTest.class.getResourceAsStream("test.json"), StandardCharsets.UTF_8);
+        final List<JSONObject> jsonObjects = JSON.parseArray(json, JSONObject.class);
+        for (JSONObject jsonObject : jsonObjects) {
+            final JSONObject after = jsonObject.getJSONObject("after");
+            System.out.println(after.get("id"));
+        }
     }
 }
